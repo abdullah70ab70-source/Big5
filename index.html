@@ -713,7 +713,7 @@
         let playingSurahId = null;
         
         let audioInstance = new Audio();
-        audioInstance.preload = "auto";
+        audioInstance.preload = "metadata";
         let isRepeat = false;
         let isAutoplay = true;
 
@@ -963,7 +963,6 @@
             
             audioInstance.pause();
             audioInstance.src = url;
-            audioInstance.load(); 
             audioInstance.play().catch(e => console.log("Playback Blocked:", e));
             
             document.getElementById('global-player').classList.add('active');
@@ -1035,8 +1034,7 @@
             }
 
             if (nextSurahObj) {
-                playingSurahId = nextSurahObj.id;
-                playSurah(playingSurahId, nextSurahObj.url, nextSurahObj.name);
+                playSurah(nextSurahObj.id, nextSurahObj.url, nextSurahObj.name);
             }
         }
 
@@ -1063,8 +1061,7 @@
             }
 
             if (prevSurahObj) {
-                playingSurahId = prevSurahObj.id;
-                playSurah(playingSurahId, prevSurahObj.url, prevSurahObj.name);
+                playSurah(prevSurahObj.id, prevSurahObj.url, prevSurahObj.name);
             }
         }
 
