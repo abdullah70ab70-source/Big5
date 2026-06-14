@@ -204,7 +204,7 @@
     </div>
 
     <script>
-        // مصفوفة أسماء السور باللغة الإنجليزية (الترتيب مطابق لرقم السورة)
+        // مصفوفة أسماء السور باللغة الإنجليزية
         const surahNamesEn = [
             "", "Al-Fatihah", "Al-Baqarah", "Ali 'Imran", "An-Nisa", "Al-Ma'idah", "Al-An'am", "Al-A'raf", "Al-Anfal", "At-Tawbah", "Yunus", "Hud", "Yusuf", "Ar-Ra'd", "Ibrahim", "Al-Hijr", "An-Nahl", "Al-Isra", "Al-Kahf", "Maryam", "Taha",
             "Al-Anbiya", "Al-Hajj", "Al-Mu'minun", "An-Nur", "Al-Furqan", "Ash-Shu'ara", "An-Naml", "Al-Qasas", "Al-'Ankabut", "Ar-Rum", "Luqman", "As-Sajdah", "Al-Ahzab", "Saba", "Fatir", "Ya-Sin", "As-Saffat", "Sad", "Az-Zumar", "Ghafir",
@@ -214,22 +214,9 @@
             "Al-Qari'ah", "At-Takathur", "Al-'Asr", "Al-Humazah", "Al-Fil", "Quraysh", "Al-Ma'un", "Al-Kawthar", "Al-Kafirun", "An-Nasr", "Al-Masad", "Al-Ikhlas", "Al-Falaq", "An-Nas"
         ];
 
-        // قواميس الترجمة والتكوين
         const translations = {
-            ar: {
-                langLabel: "EN",
-                sheikhPrefix: "الشيخ",
-                surahPrefix: "سورة",
-                downloading: "جاري تحميل",
-                downloadComplete: "تم التحميل بنجاح!"
-            },
-            en: {
-                langLabel: "AR",
-                sheikhPrefix: "Sheikh",
-                surahPrefix: "Surah",
-                downloading: "Downloading",
-                downloadComplete: "Download Complete!"
-            }
+            ar: { langLabel: "EN", sheikhPrefix: "الشيخ", surahPrefix: "سورة", downloading: "جاري تحميل", downloadComplete: "تم التحميل بنجاح!" },
+            en: { langLabel: "AR", sheikhPrefix: "Sheikh", surahPrefix: "Surah", downloading: "Downloading", downloadComplete: "Download Complete!" }
         };
         let currentLang = 'ar';
 
@@ -241,12 +228,28 @@
             { id: "basit", nameAr: "عبد الباسط عبد الصمد", nameEn: "Abdul Basit Abdul Samad", image: "https://j.top4top.io/p_38125kmkj2.jpeg" }
         ];
 
+        // --- تحديث الختمات بناءً على الطلب ---
         const editionsConfig = {
-            "husary": { 1: { pillAr: "حفص (الإذاعة)", pillEn: "Hafs (Radio)", file: "husary_1.json", descAr: "الإذاعة المصرية", descEn: "Egyptian Radio" }, 2: { pillAr: "ورش", pillEn: "Warsh", file: "husary_2.json", descAr: "رواية ورش عن نافع", descEn: "Warsh A'n Nafi'" }, 3: { pillAr: "قالون", pillEn: "Qalun", file: "husary_3.json", descAr: "رواية قالون عن نافع", descEn: "Qalun A'n Nafi'" }, 5: { pillAr: "المجود", pillEn: "Mujawwad", file: "husary_5.json", descAr: "التلاوة المجودة", descEn: "Mujawwad Recitation" } },
-            "minshawi": { 1: { pillAr: "حفص (الإذاعة)", pillEn: "Hafs (Radio)", file: "minshawi_1.json", descAr: "الإذاعة المصرية", descEn: "Egyptian Radio" }, 2: { pillAr: "المجود", pillEn: "Mujawwad", file: "minshawi_2.json", descAr: "التلاوة المجودة", descEn: "Mujawwad Recitation" } },
-            "mustafa": { 1: { pillAr: "حفص", pillEn: "Hafs", file: "mustafa_1.json", descAr: "المصحف المرتل", descEn: "Murattal Recitation" } },
-            "banna": { 1: { pillAr: "حفص", pillEn: "Hafs", file: "banna_1.json", descAr: "المصحف المرتل", descEn: "Murattal Recitation" } },
-            "basit": { 1: { pillAr: "حفص", pillEn: "Hafs", file: "basit_1.json", descAr: "المصحف المرتل", descEn: "Murattal Recitation" } }
+            "husary": { 
+                1: { pillAr: "حفص (الإذاعة)", pillEn: "Hafs (Radio)", file: "husary_1.json", descAr: "الإذاعة المصرية", descEn: "Egyptian Radio" }, 
+                2: { pillAr: "ورش", pillEn: "Warsh", file: "husary_2.json", descAr: "رواية ورش عن نافع", descEn: "Warsh A'n Nafi'" }, 
+                3: { pillAr: "قالون", pillEn: "Qalun", file: "husary_3.json", descAr: "رواية قالون عن نافع", descEn: "Qalun A'n Nafi'" }, 
+                4: { pillAr: "الدوري", pillEn: "Al-Duri", file: "husary_4.json", descAr: "رواية الدوري عن أبي عمرو", descEn: "Al-Duri A'n Abi Amr" },
+                5: { pillAr: "المجود", pillEn: "Mujawwad", file: "husary_5.json", descAr: "التلاوة المجودة", descEn: "Mujawwad Recitation" } 
+            },
+            "minshawi": { 
+                1: { pillAr: "حفص (الإذاعة)", pillEn: "Hafs (Radio)", file: "minshawi_1.json", descAr: "الإذاعة المصرية", descEn: "Egyptian Radio" }, 
+                2: { pillAr: "الختمة الثانية", pillEn: "2nd Khatma", file: "minshawi_2.json", descAr: "الختمة الثانية (المفقودة)", descEn: "The Second Khatma (Lost)" } 
+            },
+            "mustafa": { 
+                1: { pillAr: "حفص (الإذاعة)", pillEn: "Hafs (Radio)", file: "mustafa_1.json", descAr: "الإذاعة المصرية", descEn: "Egyptian Radio" } 
+            },
+            "banna": { 
+                1: { pillAr: "حفص (الإذاعة)", pillEn: "Hafs (Radio)", file: "banna_1.json", descAr: "الإذاعة المصرية", descEn: "Egyptian Radio" } 
+            },
+            "basit": { 
+                1: { pillAr: "حفص (الإذاعة)", pillEn: "Hafs (Radio)", file: "basit_1.json", descAr: "الإذاعة المصرية", descEn: "Egyptian Radio" } 
+            }
         };
 
         const icons = {
@@ -263,7 +266,6 @@
         let audioInstance = new Audio();
         let activeDownloads = {};
 
-        // جلب اسم السورة حسب اللغة المحددة
         function getSurahName(id, nameAr) {
             return currentLang === 'ar' ? nameAr : surahNamesEn[id];
         }
@@ -278,7 +280,6 @@
 
             selectSheikh(currentSheikhId);
             
-            // تحديث اسم السورة في المشغل لتكون مترجمة بالكامل
             if (playingSurahId) {
                 const sData = activeSurahsData.find(s => s.id === playingSurahId);
                 const sName = getSurahName(sData.id, sData.name);
@@ -322,6 +323,9 @@
 
         async function loadEditionData(sheikhId, editionNum) {
             const config = editionsConfig[sheikhId][editionNum];
+            // إضافة حماية إذا كانت الختمة غير موجودة (عند تغيير الشيخ)
+            if (!config) return; 
+            
             const cacheKey = `cache_${config.file}`;
             const cached = localStorage.getItem(cacheKey);
             if (cached) { activeSurahsData = JSON.parse(cached); renderSurahsList(); }
@@ -375,7 +379,6 @@
             if (activeDownloads[id]) return;
             activeDownloads[id] = true;
             
-            // جلب الاسم للعرض في نافذة التحميل
             const sData = activeSurahsData.find(s => s.id === id);
             const sName = getSurahName(id, sData.name);
 
@@ -443,7 +446,8 @@
 
         async function selectSheikh(id) {
             currentSheikhId = id;
-            currentEdition = (id === playingSheikhId && playingEditionId) ? playingEditionId : 1;
+            // إذا تغير الشيخ نعود للإصدار الأول إلا إذا كان الشيخ قيد التشغيل حالياً ونفس الإصدار موجود
+            currentEdition = (id === playingSheikhId && playingEditionId && editionsConfig[id][playingEditionId]) ? playingEditionId : 1;
             const s = recitersList.find(r => r.id === id);
             
             document.getElementById('header-avatar-img').src = s.image;
@@ -479,7 +483,6 @@
             playingSurahId = id; playingSheikhId = currentSheikhId; playingEditionId = currentEdition;
             audioInstance.src = url; audioInstance.play();
             
-            // جلب الاسم للعرض في المشغل
             const sData = activeSurahsData.find(s => s.id === id);
             const sName = getSurahName(id, sData.name);
             
