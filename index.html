@@ -35,7 +35,9 @@
         }
 
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .loading-spin { animation: spin 1s linear infinite; will-change: transform; color: var(--accent-gold); display: block; }
+        /* تم تعديل الـ color ليرث لون الزر (أبيض عند التشغيل ورمادي خلاف ذلك) */
+        .loading-spin { animation: spin 1s linear infinite; will-change: transform; display: block; }
+        
         @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
         @keyframes equalize { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
 
@@ -88,8 +90,23 @@
         .surah-info { display: flex; align-items: center; gap: 12px; }
         .surah-number { font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; min-width: 25px; }
         .surah-name { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
-        .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; }
-        .playing-icon { color: var(--accent-gold) !important; }
+        
+        /* الأزرار الدائرية الاحترافية للسور (تحميل وتشغيل) */
+        .surah-actions { display: flex; align-items: center; gap: 8px; }
+        .surah-action-btn { 
+            width: 34px; height: 34px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            background: var(--bg-light); border: 1px solid var(--glass-border); 
+            color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s;
+        }
+        .surah-action-btn:hover { background: var(--glass-active); color: var(--accent-gold); border-color: var(--accent-gold); }
+        .surah-action-btn svg { width: 14px !important; height: 14px !important; }
+        
+        /* تغيير ستايل زر التشغيل عند النقر (السورة الفعالة) */
+        .active-row .play-cell { background: var(--accent-gold); color: #fff; border-color: var(--accent-gold); box-shadow: 0 2px 8px rgba(197, 160, 89, 0.4); }
+        .active-row .play-cell:hover { color: #fff; transform: scale(1.05); }
+
+        .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         /* المشغل */
         .floating-player {
@@ -107,7 +124,15 @@
             border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
-        .play-toggle-btn { background: transparent; color: var(--accent-gold); border: none; width: 42px; height: 42px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* زر التشغيل الاحترافي داخل المشغل */
+        .play-toggle-btn { 
+            background: var(--accent-gold); color: #fff; border: none; 
+            width: 46px; height: 46px; border-radius: 50%; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.4); transition: transform 0.2s;
+        }
+        .play-toggle-btn:active { transform: scale(0.92); }
+        .play-toggle-btn svg { width: 22px !important; height: 22px !important; }
     </style>
 </head>
 <body>
@@ -142,10 +167,10 @@
                 <div id="player-track-title" style="font-size:0.85rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
                 <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;"><span id="curr-time">00:00</span> / <span id="total-time">00:00</span></div>
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <button class="icon-btn" onclick="playPrevious()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon></svg></button>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button class="icon-btn" onclick="playPrevious()"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon></svg></button>
                 <button class="play-toggle-btn" id="player-play-btn" onclick="togglePlayPause()"></button>
-                <button class="icon-btn" onclick="playNext()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon></svg></button>
+                <button class="icon-btn" onclick="playNext()"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon></svg></button>
             </div>
         </div>
     </div>
@@ -168,12 +193,12 @@
         };
 
         const icons = {
-            play: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>',
-            pause: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>',
-            loading: '<svg class="loading-spin" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>',
+            play: '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>',
+            pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>',
+            loading: '<svg class="loading-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>',
             sun: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>',
             moon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
-            download: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'
+            download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'
         };
 
         let currentTheme = 'light', currentSheikhId = "husary", currentEdition = 1;
@@ -192,12 +217,10 @@
 
                 if (isCurrentActive) {
                     row.classList.add('active-row');
-                    playBtn.classList.add('playing-icon');
-                    // استبدال أيقونة التشغيل بالتحميل إذا كان مؤقتاً أو بالإيقاف المؤقت إذا كان يعمل
+                    // يظهر الدوران (التحميل) داخل نفس زر التشغيل الدائري
                     playBtn.innerHTML = isBuffering ? icons.loading : (isPlaying ? icons.pause : icons.play);
                 } else {
                     row.classList.remove('active-row');
-                    playBtn.classList.remove('playing-icon');
                     playBtn.innerHTML = icons.play;
                 }
             });
@@ -241,9 +264,9 @@
                         <span class="surah-number">${String(s.id).padStart(3, '0')}</span>
                         <span class="surah-name">سورة ${s.name}</span>
                     </div>
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <a href="${s.url}" download="سورة_${s.name}.mp3" target="_blank" class="icon-btn" title="تحميل السورة">${icons.download}</a>
-                        <button class="icon-btn play-cell" onclick="playSurah(${s.id}, '${s.url}', '${s.name}')">${icons.play}</button>
+                    <div class="surah-actions">
+                        <a href="${s.url}" download="سورة_${s.name}.mp3" target="_blank" class="surah-action-btn" title="تحميل السورة">${icons.download}</a>
+                        <button class="surah-action-btn play-cell" onclick="playSurah(${s.id}, '${s.url}', '${s.name}')">${icons.play}</button>
                     </div>
                 </div>`).join('');
             syncUIWithAudioState();
