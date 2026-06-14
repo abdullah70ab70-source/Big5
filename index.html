@@ -35,9 +35,7 @@
         }
 
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        /* تم تعديل الـ color ليرث لون الزر (أبيض عند التشغيل ورمادي خلاف ذلك) */
         .loading-spin { animation: spin 1s linear infinite; will-change: transform; display: block; }
-        
         @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
         @keyframes equalize { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
 
@@ -91,20 +89,26 @@
         .surah-number { font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; min-width: 25px; }
         .surah-name { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
         
-        /* الأزرار الدائرية الاحترافية للسور (تحميل وتشغيل) */
+        /* الأزرار الدائرية الاحترافية */
         .surah-actions { display: flex; align-items: center; gap: 8px; }
         .surah-action-btn { 
             width: 34px; height: 34px; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
             background: var(--bg-light); border: 1px solid var(--glass-border); 
             color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s;
+            position: relative;
         }
         .surah-action-btn:hover { background: var(--glass-active); color: var(--accent-gold); border-color: var(--accent-gold); }
         .surah-action-btn svg { width: 14px !important; height: 14px !important; }
         
-        /* تغيير ستايل زر التشغيل عند النقر (السورة الفعالة) */
         .active-row .play-cell { background: var(--accent-gold); color: #fff; border-color: var(--accent-gold); box-shadow: 0 2px 8px rgba(197, 160, 89, 0.4); }
         .active-row .play-cell:hover { color: #fff; transform: scale(1.05); }
+
+        /* ستايلات حلقة التحميل الدائرية */
+        .dl-ring-svg { position: absolute; top: -1px; left: -1px; width: 34px; height: 34px; transform: rotate(-90deg); pointer-events: none; z-index: 0; }
+        .dl-ring-fill { fill: none; stroke: var(--accent-gold); stroke-width: 2.5; stroke-dasharray: 100.53; stroke-dashoffset: 100.53; transition: stroke-dashoffset 0.1s linear; stroke-linecap: round; }
+        .dl-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; z-index: 1; pointer-events: none; }
+        .downloading .dl-icon svg { display: none; } /* إخفاء أيقونة السهم أثناء التحميل لعرض النسبة */
 
         .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
@@ -124,7 +128,6 @@
             border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
-        /* زر التشغيل الاحترافي داخل المشغل */
         .play-toggle-btn { 
             background: var(--accent-gold); color: #fff; border: none; 
             width: 46px; height: 46px; border-radius: 50%; 
@@ -198,12 +201,14 @@
             loading: '<svg class="loading-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>',
             sun: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>',
             moon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
-            download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'
+            download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>',
+            check: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
         };
 
         let currentTheme = 'light', currentSheikhId = "husary", currentEdition = 1;
         let activeSurahsData = [], playingSurahId = null, playingSheikhId = null, playingEditionId = null, isBuffering = false;
         let audioInstance = new Audio();
+        let activeDownloads = {}; // لتتبع التحميلات الجارية
 
         function syncUIWithAudioState() {
             const isPlaying = !audioInstance.paused;
@@ -217,7 +222,6 @@
 
                 if (isCurrentActive) {
                     row.classList.add('active-row');
-                    // يظهر الدوران (التحميل) داخل نفس زر التشغيل الدائري
                     playBtn.innerHTML = isBuffering ? icons.loading : (isPlaying ? icons.pause : icons.play);
                 } else {
                     row.classList.remove('active-row');
@@ -265,11 +269,92 @@
                         <span class="surah-name">سورة ${s.name}</span>
                     </div>
                     <div class="surah-actions">
-                        <a href="${s.url}" download="سورة_${s.name}.mp3" target="_blank" class="surah-action-btn" title="تحميل السورة">${icons.download}</a>
+                        <!-- زر التشغيل للداخل (الأول من اليمين في اللغة العربية) -->
                         <button class="surah-action-btn play-cell" onclick="playSurah(${s.id}, '${s.url}', '${s.name}')">${icons.play}</button>
+                        
+                        <!-- زر التحميل للخارج (على اليسار) -->
+                        <button class="surah-action-btn" id="dl-btn-${s.id}" onclick="startDownload(${s.id}, '${s.url}', '${s.name}')" title="تحميل السورة">
+                            <svg class="dl-ring-svg" width="34" height="34" viewBox="0 0 34 34">
+                                <circle cx="17" cy="17" r="16" class="dl-ring-fill" id="dl-ring-${s.id}"></circle>
+                            </svg>
+                            <div class="dl-icon" id="dl-icon-${s.id}" dir="ltr">${icons.download}</div>
+                        </button>
                     </div>
                 </div>`).join('');
             syncUIWithAudioState();
+        }
+
+        // --- نظام التحميل مع شريط التقدم الاحترافي ---
+        async function startDownload(id, url, name) {
+            if (activeDownloads[id]) return; // منع التكرار
+            activeDownloads[id] = true;
+
+            const btn = document.getElementById(`dl-btn-${id}`);
+            const ring = document.getElementById(`dl-ring-${id}`);
+            const iconDiv = document.getElementById(`dl-icon-${id}`);
+
+            try {
+                btn.classList.add('downloading');
+                const response = await fetch(url, { mode: 'cors' });
+                
+                if (!response.ok) throw new Error("CORS/Network Error");
+                
+                const contentLength = response.headers.get('content-length');
+                const total = parseInt(contentLength, 10);
+                const reader = response.body.getReader();
+                let received = 0;
+                let chunks = [];
+
+                while(true) {
+                    const {done, value} = await reader.read();
+                    if (done) break;
+                    chunks.push(value);
+                    received += value.length;
+                    
+                    if (total) {
+                        const pct = received / total;
+                        const offset = 100.53 - (pct * 100.53);
+                        ring.style.strokeDashoffset = offset;
+                        iconDiv.innerText = Math.round(pct * 100) + '%';
+                    } else {
+                        iconDiv.innerHTML = icons.loading;
+                    }
+                }
+                
+                const blob = new Blob(chunks, { type: 'audio/mpeg' });
+                const objectUrl = URL.createObjectURL(blob);
+                triggerNativeDownload(objectUrl, `سورة_${name}.mp3`);
+                URL.revokeObjectURL(objectUrl);
+                
+                finishDownloadUI(id, btn, ring, iconDiv);
+
+            } catch (err) {
+                // الطريقة البديلة المخفية في حال منع السيرفر الخارجي تتبع التحميل (CORS)
+                console.warn("جاري استخدام التحميل المباشر البديل", err);
+                triggerNativeDownload(url, `سورة_${name}.mp3`);
+                finishDownloadUI(id, btn, ring, iconDiv);
+            }
+        }
+
+        function triggerNativeDownload(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function finishDownloadUI(id, btn, ring, iconDiv) {
+            iconDiv.innerHTML = icons.check;
+            ring.style.strokeDashoffset = 0; // دائرة مكتملة
+            setTimeout(() => {
+                ring.style.strokeDashoffset = 100.53; // تصفير الدائرة
+                iconDiv.innerHTML = icons.download;
+                btn.classList.remove('downloading');
+                delete activeDownloads[id];
+            }, 2500);
         }
 
         async function selectSheikh(id) {
@@ -342,7 +427,6 @@
 
         function formatTime(s) { const m = Math.floor(s/60), sec = Math.floor(s%60); return `${m}:${sec < 10 ? '0'+sec : sec}`; }
 
-        // --- منطق السحب والتنقل في الشريط ---
         let isDragging = false;
         const progressContainer = document.getElementById('progress-container');
 
