@@ -40,17 +40,20 @@
         @keyframes equalize { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding-bottom: 150px; transition: 0.2s; user-select: none; }
+        /* تمت إزالة الـ transition من هنا ليصبح تبديل المظهر فوري وسريع */
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding-bottom: 150px; user-select: none; }
+        
         .container { width: 100%; max-width: 480px; margin: 0 auto; padding: 8px 16px; }
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .top-btn { background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .top-btn { background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-weight: 700; font-size: 0.8rem; }
+        .top-btn:hover { background: var(--glass-active); color: var(--accent-gold); border-color: var(--accent-gold); }
         
         header { text-align: center; padding: 10px 0; }
         .header-img { height: 85px; width: 85px; border-radius: 50%; border: 2px solid var(--accent-gold); box-shadow: 0 4px 20px var(--shadow-intensity); object-fit: cover; margin-bottom: 10px; }
         header h1 { font-size: 1.25rem; font-weight: 300; }
         header h1 strong { font-weight: 700; color: var(--accent-gold); }
-        header p { font-size: 0.75rem; color: var(--text-muted); }
+        header p { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
 
         .sheikh-selector-wrapper { width: 100%; margin: 15px 0; }
         .sheikh-list { display: flex; gap: 12px; overflow-x: auto; padding: 5px 5px 15px 5px; scrollbar-width: none; }
@@ -74,10 +77,10 @@
 
         .pills-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
         .pill-item {
-            background: var(--bg-mid); border: 1px solid var(--glass-border); color: var(--text-muted);
+            background: var(--bg-mid); border: 1px solid var(--glass-border); color: var(--text-muted); transition: 0.2s;
             padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; cursor: pointer; white-space: nowrap;
         }
-        .pill-item.active { background: var(--accent-gold); color: #fff; }
+        .pill-item.active { background: var(--accent-gold); color: #fff; border-color: var(--accent-gold); }
 
         .surah-list-container { display: flex; flex-direction: column; gap: 6px; }
         .surah-row {
@@ -89,14 +92,13 @@
         .surah-number { font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; min-width: 25px; }
         .surah-name { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
         
-        /* الأزرار الدائرية الاحترافية */
+        /* الأزرار الدائرية للسور */
         .surah-actions { display: flex; align-items: center; gap: 8px; }
         .surah-action-btn { 
             width: 34px; height: 34px; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
             background: var(--bg-light); border: 1px solid var(--glass-border); 
             color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s;
-            position: relative;
         }
         .surah-action-btn:hover { background: var(--glass-active); color: var(--accent-gold); border-color: var(--accent-gold); }
         .surah-action-btn svg { width: 14px !important; height: 14px !important; }
@@ -104,20 +106,31 @@
         .active-row .play-cell { background: var(--accent-gold); color: #fff; border-color: var(--accent-gold); box-shadow: 0 2px 8px rgba(197, 160, 89, 0.4); }
         .active-row .play-cell:hover { color: #fff; transform: scale(1.05); }
 
-        /* ستايلات حلقة التحميل الدائرية */
-        .dl-ring-svg { position: absolute; top: -1px; left: -1px; width: 34px; height: 34px; transform: rotate(-90deg); pointer-events: none; z-index: 0; }
-        .dl-ring-fill { fill: none; stroke: var(--accent-gold); stroke-width: 2.5; stroke-dasharray: 100.53; stroke-dashoffset: 100.53; transition: stroke-dashoffset 0.1s linear; stroke-linecap: round; }
-        .dl-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; z-index: 1; pointer-events: none; }
-        .downloading .dl-icon svg { display: none; } /* إخفاء أيقونة السهم أثناء التحميل لعرض النسبة */
+        .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
+        .icon-btn:hover { color: var(--accent-gold); }
 
-        .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* نافذة التحميل المنبثقة الاحترافية */
+        .download-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            z-index: 9999; display: none; align-items: center; justify-content: center;
+        }
+        .download-modal-content {
+            background: var(--bg-mid); border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 25px; width: 85%; max-width: 320px;
+            text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .dl-modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 15px; color: var(--text-main); }
+        .dl-progress-track { width: 100%; height: 8px; background: var(--glass-border); border-radius: 10px; overflow: hidden; position: relative; }
+        .dl-progress-fill { height: 100%; width: 0%; background: var(--accent-gold); transition: width 0.1s linear; border-radius: 10px; }
+        .dl-modal-pct { margin-top: 12px; font-size: 0.9rem; font-weight: 700; color: var(--accent-gold); }
 
-        /* المشغل */
+        /* المشغل السفلي */
         .floating-player {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 440px; background: var(--player-bg); backdrop-filter: blur(20px);
             border-radius: 20px; border: 1px solid var(--glass-border); padding: 12px 18px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; z-index: 1000; transition: background 0.2s;
         }
         .player-seekbar-container { width: 100%; height: 20px; display: flex; align-items: center; cursor: pointer; direction: ltr; margin-bottom: 8px; }
         .player-seekbar-track { width: 100%; height: 5px; background: rgba(0,0,0,0.05); border-radius: 10px; position: relative; }
@@ -157,6 +170,18 @@
         <div class="surah-list-container" id="main-surah-list"></div>
     </div>
 
+    <!-- نافذة التحميل المنبثقة -->
+    <div id="download-modal" class="download-modal">
+        <div class="download-modal-content">
+            <div id="dl-modal-title" class="dl-modal-title">جاري التحميل...</div>
+            <div class="dl-progress-track">
+                <div id="dl-progress-fill" class="dl-progress-fill"></div>
+            </div>
+            <div id="dl-modal-pct" class="dl-modal-pct">0%</div>
+        </div>
+    </div>
+
+    <!-- المشغل العائم -->
     <div class="floating-player" id="global-player">
         <div class="player-seekbar-container" id="progress-container">
             <div class="player-seekbar-track">
@@ -168,31 +193,50 @@
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
             <div style="flex:1; min-width:0;">
                 <div id="player-track-title" style="font-size:0.85rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-                <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;"><span id="curr-time">00:00</span> / <span id="total-time">00:00</span></div>
+                <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;"><span id="curr-time" dir="ltr">00:00</span> / <span id="total-time" dir="ltr">00:00</span></div>
             </div>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <button class="icon-btn" onclick="playPrevious()"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon></svg></button>
+            <div style="display:flex; align-items:center; gap:10px; flex-direction:row-reverse;" id="player-controls">
+                <button class="icon-btn" onclick="playNext()" style="transform: scaleX(-1);"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon></svg></button>
                 <button class="play-toggle-btn" id="player-play-btn" onclick="togglePlayPause()"></button>
-                <button class="icon-btn" onclick="playNext()"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon></svg></button>
+                <button class="icon-btn" onclick="playPrevious()" style="transform: scaleX(-1);"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon></svg></button>
             </div>
         </div>
     </div>
 
     <script>
+        // قواميس الترجمة والتكوين
+        const translations = {
+            ar: {
+                langLabel: "EN",
+                sheikhPrefix: "الشيخ",
+                surahPrefix: "سورة",
+                downloading: "جاري تحميل",
+                downloadComplete: "تم التحميل بنجاح!"
+            },
+            en: {
+                langLabel: "عربي",
+                sheikhPrefix: "Sheikh",
+                surahPrefix: "Surah",
+                downloading: "Downloading",
+                downloadComplete: "Download Complete!"
+            }
+        };
+        let currentLang = 'ar';
+
         const recitersList = [
-            { id: "husary", nameAr: "محمود خليل الحصري", image: "https://h.top4top.io/p_3812jamsy0.jpg" },
-            { id: "minshawi", nameAr: "محمد صديق المنشاوي", image: "https://f.top4top.io/p_38068cvpd0.jpg" },
-            { id: "mustafa", nameAr: "مصطفى إسماعيل", image: "https://i.top4top.io/p_3812x41cu1.jpg" },
-            { id: "banna", nameAr: "محمود علي البنا", image: "https://k.top4top.io/p_3812hi6wr3.jpeg" },
-            { id: "basit", nameAr: "عبد الباسط عبد الصمد", image: "https://j.top4top.io/p_38125kmkj2.jpeg" }
+            { id: "husary", nameAr: "محمود خليل الحصري", nameEn: "Mahmoud Khalil Al-Husary", image: "https://h.top4top.io/p_3812jamsy0.jpg" },
+            { id: "minshawi", nameAr: "محمد صديق المنشاوي", nameEn: "Muhammad Siddiq Minshawi", image: "https://f.top4top.io/p_38068cvpd0.jpg" },
+            { id: "mustafa", nameAr: "مصطفى إسماعيل", nameEn: "Mustafa Ismail", image: "https://i.top4top.io/p_3812x41cu1.jpg" },
+            { id: "banna", nameAr: "محمود علي البنا", nameEn: "Mahmoud Ali Al-Banna", image: "https://k.top4top.io/p_3812hi6wr3.jpeg" },
+            { id: "basit", nameAr: "عبد الباسط عبد الصمد", nameEn: "Abdul Basit Abdul Samad", image: "https://j.top4top.io/p_38125kmkj2.jpeg" }
         ];
 
         const editionsConfig = {
-            "husary": { 1: { pill: "حفص (الإذاعة)", file: "husary_1.json", desc: "الإذاعة المصرية" }, 2: { pill: "ورش", file: "husary_2.json", desc: "رواية ورش عن نافع" }, 3: { pill: "قالون", file: "husary_3.json", desc: "رواية قالون عن نافع" }, 5: { pill: "المجود", file: "husary_5.json", desc: "التلاوة المجودة" } },
-            "minshawi": { 1: { pill: "حفص (الإذاعة)", file: "minshawi_1.json", desc: "الإذاعة المصرية" }, 2: { pill: "المجود", file: "minshawi_2.json", desc: "التلاوة المجودة" } },
-            "mustafa": { 1: { pill: "حفص", file: "mustafa_1.json", desc: "المصحف المرتل" } },
-            "banna": { 1: { pill: "حفص", file: "banna_1.json", desc: "المصحف المرتل" } },
-            "basit": { 1: { pill: "حفص", file: "basit_1.json", desc: "المصحف المرتل" } }
+            "husary": { 1: { pillAr: "حفص (الإذاعة)", pillEn: "Hafs (Radio)", file: "husary_1.json", descAr: "الإذاعة المصرية", descEn: "Egyptian Radio" }, 2: { pillAr: "ورش", pillEn: "Warsh", file: "husary_2.json", descAr: "رواية ورش عن نافع", descEn: "Warsh A'n Nafi'" }, 3: { pillAr: "قالون", pillEn: "Qalun", file: "husary_3.json", descAr: "رواية قالون عن نافع", descEn: "Qalun A'n Nafi'" }, 5: { pillAr: "المجود", pillEn: "Mujawwad", file: "husary_5.json", descAr: "التلاوة المجودة", descEn: "Mujawwad Recitation" } },
+            "minshawi": { 1: { pillAr: "حفص (الإذاعة)", pillEn: "Hafs (Radio)", file: "minshawi_1.json", descAr: "الإذاعة المصرية", descEn: "Egyptian Radio" }, 2: { pillAr: "المجود", pillEn: "Mujawwad", file: "minshawi_2.json", descAr: "التلاوة المجودة", descEn: "Mujawwad Recitation" } },
+            "mustafa": { 1: { pillAr: "حفص", pillEn: "Hafs", file: "mustafa_1.json", descAr: "المصحف المرتل", descEn: "Murattal Recitation" } },
+            "banna": { 1: { pillAr: "حفص", pillEn: "Hafs", file: "banna_1.json", descAr: "المصحف المرتل", descEn: "Murattal Recitation" } },
+            "basit": { 1: { pillAr: "حفص", pillEn: "Hafs", file: "basit_1.json", descAr: "المصحف المرتل", descEn: "Murattal Recitation" } }
         };
 
         const icons = {
@@ -201,14 +245,39 @@
             loading: '<svg class="loading-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>',
             sun: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>',
             moon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
-            download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>',
-            check: '<svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+            download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'
         };
 
         let currentTheme = 'light', currentSheikhId = "husary", currentEdition = 1;
         let activeSurahsData = [], playingSurahId = null, playingSheikhId = null, playingEditionId = null, isBuffering = false;
         let audioInstance = new Audio();
-        let activeDownloads = {}; // لتتبع التحميلات الجارية
+        let activeDownloads = {};
+
+        // --- نظام التبديل بين اللغات ---
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = currentLang;
+            document.getElementById('lang-label').innerText = translations[currentLang].langLabel;
+            
+            // عكس أزرار المشغل لتتوافق مع اتجاه اللغة
+            document.getElementById('player-controls').style.flexDirection = currentLang === 'ar' ? 'row-reverse' : 'row';
+
+            // إعادة عرض البيانات باللغة الجديدة
+            selectSheikh(currentSheikhId);
+            
+            // تحديث اسم السورة في المشغل إذا كان يعمل
+            if (playingSurahId) {
+                const sName = activeSurahsData.find(s => s.id === playingSurahId)?.name || "";
+                document.getElementById('player-track-title').innerText = `${translations[currentLang].surahPrefix} ${sName}`;
+            }
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.className = currentTheme === 'dark' ? 'dark-theme' : '';
+            document.getElementById('theme-toggle-btn').innerHTML = currentTheme === 'dark' ? icons.moon : icons.sun;
+        }
 
         function syncUIWithAudioState() {
             const isPlaying = !audioInstance.paused;
@@ -249,15 +318,18 @@
                 activeSurahsData = data;
                 localStorage.setItem(cacheKey, JSON.stringify(data));
                 renderSurahsList();
-            } catch (e) { console.error("Error"); }
+            } catch (e) { console.error("Error loading JSON"); }
         }
 
         function renderSheikhCarousel() {
-            document.getElementById('sheikh-carousel').innerHTML = recitersList.map(s => `
+            document.getElementById('sheikh-carousel').innerHTML = recitersList.map(s => {
+                const nameToShow = currentLang === 'ar' ? s.nameAr : s.nameEn;
+                return `
                 <div class="sheikh-item ${s.id === currentSheikhId ? 'active' : ''}" data-id="${s.id}" onclick="selectSheikh('${s.id}')">
                     <div class="sheikh-avatar-container"><img src="${s.image}" class="sheikh-avatar-img"></div>
-                    <div style="font-size:0.65rem; font-weight:700; margin-top:6px;">${s.nameAr}</div>
-                </div>`).join('');
+                    <div style="font-size:0.65rem; font-weight:700; margin-top:6px;">${nameToShow}</div>
+                </div>`;
+            }).join('');
             syncUIWithAudioState();
         }
 
@@ -266,41 +338,41 @@
                 <div class="surah-row" data-id="${s.id}">
                     <div class="surah-info">
                         <span class="surah-number">${String(s.id).padStart(3, '0')}</span>
-                        <span class="surah-name">سورة ${s.name}</span>
+                        <span class="surah-name">${translations[currentLang].surahPrefix} ${s.name}</span>
                     </div>
-                    <div class="surah-actions">
-                        <!-- زر التشغيل للداخل (الأول من اليمين في اللغة العربية) -->
+                    <div class="surah-actions" style="flex-direction: ${currentLang === 'ar' ? 'row' : 'row-reverse'};">
+                        <!-- زر التشغيل من الداخل -->
                         <button class="surah-action-btn play-cell" onclick="playSurah(${s.id}, '${s.url}', '${s.name}')">${icons.play}</button>
-                        
-                        <!-- زر التحميل للخارج (على اليسار) -->
-                        <button class="surah-action-btn" id="dl-btn-${s.id}" onclick="startDownload(${s.id}, '${s.url}', '${s.name}')" title="تحميل السورة">
-                            <svg class="dl-ring-svg" width="34" height="34" viewBox="0 0 34 34">
-                                <circle cx="17" cy="17" r="16" class="dl-ring-fill" id="dl-ring-${s.id}"></circle>
-                            </svg>
-                            <div class="dl-icon" id="dl-icon-${s.id}" dir="ltr">${icons.download}</div>
+                        <!-- زر التحميل البسيط الخارجي -->
+                        <button class="surah-action-btn" onclick="startDownload(${s.id}, '${s.url}', '${s.name}')" title="تحميل">
+                            ${icons.download}
                         </button>
                     </div>
                 </div>`).join('');
             syncUIWithAudioState();
         }
 
-        // --- نظام التحميل مع شريط التقدم الاحترافي ---
+        // --- نظام التحميل مع النافذة المنبثقة (Popup) ---
+        const dlModal = document.getElementById('download-modal');
+        const dlFill = document.getElementById('dl-progress-fill');
+        const dlPct = document.getElementById('dl-modal-pct');
+        const dlTitle = document.getElementById('dl-modal-title');
+
         async function startDownload(id, url, name) {
-            if (activeDownloads[id]) return; // منع التكرار
+            if (activeDownloads[id]) return;
             activeDownloads[id] = true;
 
-            const btn = document.getElementById(`dl-btn-${id}`);
-            const ring = document.getElementById(`dl-ring-${id}`);
-            const iconDiv = document.getElementById(`dl-icon-${id}`);
+            // إظهار النافذة المنبثقة وتصفير القيم
+            dlModal.style.display = 'flex';
+            dlFill.style.width = '0%';
+            dlPct.innerText = '0%';
+            dlTitle.innerText = `${translations[currentLang].downloading} ${name}...`;
 
             try {
-                btn.classList.add('downloading');
                 const response = await fetch(url, { mode: 'cors' });
-                
                 if (!response.ok) throw new Error("CORS/Network Error");
                 
-                const contentLength = response.headers.get('content-length');
-                const total = parseInt(contentLength, 10);
+                const total = parseInt(response.headers.get('content-length'), 10);
                 const reader = response.body.getReader();
                 let received = 0;
                 let chunks = [];
@@ -312,27 +384,25 @@
                     received += value.length;
                     
                     if (total) {
-                        const pct = received / total;
-                        const offset = 100.53 - (pct * 100.53);
-                        ring.style.strokeDashoffset = offset;
-                        iconDiv.innerText = Math.round(pct * 100) + '%';
+                        const pct = Math.round((received / total) * 100);
+                        dlFill.style.width = pct + '%';
+                        dlPct.innerText = pct + '%';
                     } else {
-                        iconDiv.innerHTML = icons.loading;
+                        dlPct.innerHTML = '<span class="loading-spin" style="display:inline-block; width:15px; height:15px;">⏳</span>';
                     }
                 }
                 
                 const blob = new Blob(chunks, { type: 'audio/mpeg' });
                 const objectUrl = URL.createObjectURL(blob);
-                triggerNativeDownload(objectUrl, `سورة_${name}.mp3`);
+                triggerNativeDownload(objectUrl, `${translations[currentLang].surahPrefix}_${name}.mp3`);
                 URL.revokeObjectURL(objectUrl);
                 
-                finishDownloadUI(id, btn, ring, iconDiv);
+                finishDownloadUI(id);
 
             } catch (err) {
-                // الطريقة البديلة المخفية في حال منع السيرفر الخارجي تتبع التحميل (CORS)
-                console.warn("جاري استخدام التحميل المباشر البديل", err);
-                triggerNativeDownload(url, `سورة_${name}.mp3`);
-                finishDownloadUI(id, btn, ring, iconDiv);
+                // الطريقة البديلة في حال فشل التتبع
+                triggerNativeDownload(url, `${translations[currentLang].surahPrefix}_${name}.mp3`);
+                finishDownloadUI(id);
             }
         }
 
@@ -346,37 +416,46 @@
             document.body.removeChild(a);
         }
 
-        function finishDownloadUI(id, btn, ring, iconDiv) {
-            iconDiv.innerHTML = icons.check;
-            ring.style.strokeDashoffset = 0; // دائرة مكتملة
+        function finishDownloadUI(id) {
+            dlTitle.innerText = translations[currentLang].downloadComplete;
+            dlFill.style.width = '100%';
+            dlPct.innerText = '100%';
             setTimeout(() => {
-                ring.style.strokeDashoffset = 100.53; // تصفير الدائرة
-                iconDiv.innerHTML = icons.download;
-                btn.classList.remove('downloading');
+                dlModal.style.display = 'none';
                 delete activeDownloads[id];
-            }, 2500);
+            }, 1500);
         }
 
         async function selectSheikh(id) {
             currentSheikhId = id;
             currentEdition = (id === playingSheikhId && playingEditionId) ? playingEditionId : 1;
             const s = recitersList.find(r => r.id === id);
+            
             document.getElementById('header-avatar-img').src = s.image;
-            document.getElementById('main-title').innerHTML = `الشيخ <strong>${s.nameAr}</strong>`;
-            document.getElementById('header-subtitle').innerText = editionsConfig[id][currentEdition].desc;
-            renderSheikhCarousel(); renderEditionSelector();
+            
+            const nameToShow = currentLang === 'ar' ? s.nameAr : s.nameEn;
+            document.getElementById('main-title').innerHTML = `${translations[currentLang].sheikhPrefix} <strong>${nameToShow}</strong>`;
+            
+            const descToShow = currentLang === 'ar' ? editionsConfig[id][currentEdition].descAr : editionsConfig[id][currentEdition].descEn;
+            document.getElementById('header-subtitle').innerText = descToShow;
+            
+            renderSheikhCarousel(); 
+            renderEditionSelector();
             await loadEditionData(id, currentEdition);
         }
 
         function renderEditionSelector() {
             const configs = editionsConfig[currentSheikhId];
-            document.getElementById('pills-container').innerHTML = Object.keys(configs).map(key => `
-                <div class="pill-item ${currentEdition == key ? 'active' : ''}" onclick="switchEdition(${key})">${configs[key].pill}</div>`).join('');
+            document.getElementById('pills-container').innerHTML = Object.keys(configs).map(key => {
+                const pillToShow = currentLang === 'ar' ? configs[key].pillAr : configs[key].pillEn;
+                return `<div class="pill-item ${currentEdition == key ? 'active' : ''}" onclick="switchEdition(${key})">${pillToShow}</div>`;
+            }).join('');
         }
 
         async function switchEdition(num) {
             currentEdition = num;
-            document.getElementById('header-subtitle').innerText = editionsConfig[currentSheikhId][num].desc;
+            const descToShow = currentLang === 'ar' ? editionsConfig[currentSheikhId][num].descAr : editionsConfig[currentSheikhId][num].descEn;
+            document.getElementById('header-subtitle').innerText = descToShow;
             renderEditionSelector(); await loadEditionData(currentSheikhId, num);
         }
 
@@ -385,19 +464,13 @@
             playingSurahId = id; playingSheikhId = currentSheikhId; playingEditionId = currentEdition;
             audioInstance.src = url; audioInstance.play();
             document.getElementById('global-player').style.display = 'block';
-            document.getElementById('player-track-title').innerText = "سورة " + name;
+            document.getElementById('player-track-title').innerText = `${translations[currentLang].surahPrefix} ${name}`;
             syncUIWithAudioState();
         }
 
         function togglePlayPause() {
             if (audioInstance.paused) audioInstance.play(); else audioInstance.pause();
             syncUIWithAudioState();
-        }
-
-        function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.body.className = currentTheme === 'dark' ? 'dark-theme' : '';
-            document.getElementById('theme-toggle-btn').innerHTML = currentTheme === 'dark' ? icons.moon : icons.sun;
         }
 
         function playNext() {
@@ -449,7 +522,8 @@
         progressContainer.addEventListener('click', (e) => { audioInstance.currentTime = seek(e) * audioInstance.duration; });
 
         (async () => {
-            toggleTheme(); toggleTheme();
+            // تهيئة التطبيق
+            document.getElementById('theme-toggle-btn').innerHTML = currentTheme === 'dark' ? icons.moon : icons.sun;
             await selectSheikh('husary');
         })();
     </script>
