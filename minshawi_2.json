@@ -45,138 +45,138 @@
     "url": "https://files.catbox.moe/rtf9qv.m4a"
   },
   {
-    "id": 10,
-    "name": "يونس",
-    "url": "https://files.catbox.moe/whqist.m4a"
-  },
-  {
-    "id": 11,
-    "name": "هود",
-    "url": "https://files.catbox.moe/atyglk.m4a"
-  },
-  {
-    "id": 12,
-    "name": "يوسف",
-    "url": "https://files.catbox.moe/lkxuyq.m4a"
-  },
-  {
-    "id": 13,
-    "name": "الرعد",
-    "url": "https://files.catbox.moe/716ysw.m4a"
-  },
-  {
-    "id": 14,
-    "name": "إبراهيم",
-    "url": "https://files.catbox.moe/rnk8sw.m4a"
-  },
-  {
-    "id": 15,
-    "name": "الحجر",
-    "url": "https://files.catbox.moe/j0licr.m4a"
-  },
-  {
-    "id": 16,
-    "name": "النحل",
-    "url": "https://files.catbox.moe/kuglkg.m4a"
-  },
-  {
-    "id": 17,
-    "name": "الإسراء",
-    "url": "https://files.catbox.moe/u2mw5o.m4a"
-  },
-  {
     "id": 18,
     "name": "الكهف",
-    "url": "https://files.catbox.moe/75xy8v.m4a"
+    "url": "https://files.catbox.moe/whqist.m4a"
   },
   {
     "id": 19,
     "name": "مريم",
-    "url": "https://files.catbox.moe/kf9yd5.m4a"
+    "url": "https://files.catbox.moe/atyglk.m4a"
   },
   {
     "id": 20,
     "name": "طه",
+    "url": "https://files.catbox.moe/lkxuyq.m4a"
+  },
+  {
+    "id": 38,
+    "name": "ص",
+    "url": "https://files.catbox.moe/716ysw.m4a"
+  },
+  {
+    "id": 39,
+    "name": "الزمر",
+    "url": "https://files.catbox.moe/rnk8sw.m4a"
+  },
+  {
+    "id": 40,
+    "name": "غافر",
+    "url": "https://files.catbox.moe/j0licr.m4a"
+  },
+  {
+    "id": 41,
+    "name": "فصلت",
+    "url": "https://files.catbox.moe/kuglkg.m4a"
+  },
+  {
+    "id": 47,
+    "name": "محمد",
+    "url": "https://files.catbox.moe/u2mw5o.m4a"
+  },
+  {
+    "id": 48,
+    "name": "الفتح",
+    "url": "https://files.catbox.moe/75xy8v.m4a"
+  },
+  {
+    "id": 49,
+    "name": "الحجرات",
+    "url": "https://files.catbox.moe/kf9yd5.m4a"
+  },
+  {
+    "id": 50,
+    "name": "ق",
     "url": "https://files.catbox.moe/l5f8l4.m4a"
   },
   {
-    "id": 21,
-    "name": "الأنبياء",
+    "id": 51,
+    "name": "الذاريات",
     "url": "https://files.catbox.moe/6aaxiz.m4a"
   },
   {
-    "id": 22,
-    "name": "الحج",
+    "id": 52,
+    "name": "الطور",
     "url": "https://files.catbox.moe/gsqqsh.m4a"
   },
   {
-    "id": 23,
-    "name": "المؤمنون",
+    "id": 53,
+    "name": "النجم",
     "url": "https://files.catbox.moe/7zi97g.m4a"
   },
   {
-    "id": 24,
-    "name": "النور",
+    "id": 54,
+    "name": "القمر",
     "url": "https://files.catbox.moe/k3jn7n.m4a"
   },
   {
-    "id": 25,
-    "name": "الفرقان",
+    "id": 55,
+    "name": "الرحمن",
     "url": "https://files.catbox.moe/71uu5o.m4a"
   },
   {
-    "id": 26,
-    "name": "الشعراء",
+    "id": 56,
+    "name": "الواقعة",
     "url": "https://files.catbox.moe/96xq3u.m4a"
   },
   {
-    "id": 27,
-    "name": "النمل",
+    "id": 57,
+    "name": "الحديد",
     "url": "https://files.catbox.moe/85pjb0.m4a"
   },
   {
-    "id": 28,
-    "name": "القصص",
+    "id": 60,
+    "name": "الممتحنة",
     "url": "https://files.catbox.moe/bxhc4b.m4a"
   },
   {
-    "id": 29,
-    "name": "العنكبوت",
+    "id": 61,
+    "name": "الصف",
     "url": "https://files.catbox.moe/oel0on.m4a"
   },
   {
-    "id": 30,
-    "name": "الروم",
+    "id": 62,
+    "name": "الجمعة",
     "url": "https://files.catbox.moe/zfy8q8.m4a"
   },
   {
-    "id": 31,
-    "name": "لقمان",
+    "id": 63,
+    "name": "المنافقون",
     "url": "https://files.catbox.moe/lhfez6.m4a"
   },
   {
-    "id": 32,
-    "name": "السجدة",
+    "id": 64,
+    "name": "التغابن",
     "url": "https://files.catbox.moe/pb36h4.m4a"
   },
   {
-    "id": 33,
-    "name": "الأحزاب",
+    "id": 65,
+    "name": "الطلاق",
     "url": "https://files.catbox.moe/e1qf81.m4a"
   },
   {
-    "id": 34,
-    "name": "سبأ",
+    "id": 66,
+    "name": "التحريم",
     "url": "https://files.catbox.moe/xm4ax1.m4a"
   },
   {
-    "id": 35,
-    "name": "فاطر",
+    "id": 67,
+    "name": "الملك",
     "url": "https://files.catbox.moe/2tttej.m4a"
   },
   {
-    "id": 36,
-    "name": "يس",
+    "id": 68,
+    "name": "القلم",
     "url": "https://files.catbox.moe/qxv7b6.m4a"
   }
 ]
