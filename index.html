@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مصحف كبار القراء - فائق الأداء</title>
+    <title>مصحف كبار القراء - المزامنة الذكية</title>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6JJ4WGLT89"></script>
     <script>
@@ -34,27 +34,18 @@
             --shadow-intensity: rgba(0, 0, 0, 0.5);
         }
 
-        /* --- أنيميشن فائق الأداء (GPU Optimized) --- */
+        /* --- Animations --- */
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .loading-spin { animation: spin 1s linear infinite; will-change: transform; }
-
-        @keyframes pulse-ring { 
-            0% { transform: scale(0.8); opacity: 0.8; } 
-            100% { transform: scale(1.8); opacity: 0; } 
-        }
-
-        @keyframes equalize { 
-            0% { transform: scaleY(0.3); } 
-            100% { transform: scaleY(1); } 
-        }
+        .loading-spin { animation: spin 1s linear infinite; will-change: transform; color: var(--accent-gold); }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
+        @keyframes equalize { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Cairo', sans-serif; background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding-bottom: 150px; transition: 0.2s; }
         .container { width: 100%; max-width: 480px; margin: 0 auto; padding: 8px 16px; }
 
-        /* ترويسة الصفحة */
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .top-btn { background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .top-btn { background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
         header { text-align: center; padding: 10px 0; }
         .header-img { height: 85px; width: 85px; border-radius: 50%; border: 2px solid var(--accent-gold); box-shadow: 0 4px 20px var(--shadow-intensity); object-fit: cover; margin-bottom: 10px; }
@@ -62,7 +53,7 @@
         header h1 strong { font-weight: 700; color: var(--accent-gold); }
         header p { font-size: 0.75rem; color: var(--text-muted); }
 
-        /* قائمة القراء */
+        /* القراء */
         .sheikh-selector-wrapper { width: 100%; margin: 15px 0; }
         .sheikh-list { display: flex; gap: 12px; overflow-x: auto; padding: 5px 5px 15px 5px; scrollbar-width: none; }
         .sheikh-list::-webkit-scrollbar { display: none; }
@@ -80,14 +71,10 @@
             background: var(--accent-gold); border-radius: 50%; border: 2px solid var(--bg-mid);
             display: flex; align-items: flex-end; justify-content: center; gap: 2px; padding-bottom: 5px;
         }
-        .playing-badge::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--accent-gold); border-radius: 50%; z-index: -1;
-            animation: pulse-ring 1.5s infinite;
-        }
+        .playing-badge::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--accent-gold); border-radius: 50%; z-index: -1; animation: pulse-ring 1.5s infinite; }
         .equalizer-bar { width: 2px; background: #fff; height: 10px; transform-origin: bottom; }
 
-        /* الختمات (Pills) */
+        /* الختمات */
         .pills-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
         .pill-item {
             background: var(--bg-mid); border: 1px solid var(--glass-border); color: var(--text-muted);
@@ -95,7 +82,7 @@
         }
         .pill-item.active { background: var(--accent-gold); color: #fff; }
 
-        /* قائمة السور (التصميم الأصلي) */
+        /* قائمة السور */
         .surah-list-container { display: flex; flex-direction: column; gap: 6px; }
         .surah-row {
             display: flex; align-items: center; justify-content: space-between; padding: 12px 15px;
@@ -105,10 +92,10 @@
         .surah-info { display: flex; align-items: center; gap: 12px; }
         .surah-number { font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; min-width: 25px; }
         .surah-name { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
-        .icon-btn { background: transparent; border: none; color: var(--text-muted); width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .playing-icon { color: var(--accent-gold) !important; }
 
-        /* المشغل (التصميم الأصلي المطور) */
+        /* المشغل */
         .floating-player {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 440px; background: var(--player-bg); backdrop-filter: blur(20px);
@@ -119,11 +106,7 @@
         .player-seekbar-fill { height: 100%; background: var(--accent-gold); width: 0%; border-radius: 10px; position: relative; will-change: width; }
         .player-seekbar-fill::after { content: ''; position: absolute; right: -5px; top: -3px; width: 11px; height: 11px; background: #fff; border: 2px solid var(--accent-gold); border-radius: 50%; }
         
-        .play-toggle-btn { 
-            background: var(--accent-gold); color: #fff; width: 42px; height: 42px; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.3);
-        }
+        .play-toggle-btn { background: var(--accent-gold); color: #fff; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -140,25 +123,17 @@
             <p id="header-subtitle"></p>
         </header>
 
-        <div class="sheikh-selector-wrapper">
-            <div class="sheikh-list" id="sheikh-carousel"></div>
-        </div>
-
+        <div class="sheikh-selector-wrapper"><div class="sheikh-list" id="sheikh-carousel"></div></div>
         <div class="pills-container" id="pills-container"></div>
         <div class="surah-list-container" id="main-surah-list"></div>
     </div>
 
-    <!-- المشغل العائم -->
     <div class="floating-player" id="global-player">
-        <div class="player-seekbar-container" id="progress-container">
-            <div class="player-seekbar-fill" id="progress-bar-fill"></div>
-        </div>
+        <div class="player-seekbar-container" id="progress-container"><div class="player-seekbar-fill" id="progress-bar-fill"></div></div>
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
             <div style="flex:1; min-width:0;">
                 <div id="player-track-title" style="font-size:0.85rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-                <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">
-                    <span id="curr-time">00:00</span> / <span id="total-time">00:00</span>
-                </div>
+                <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;"><span id="curr-time">00:00</span> / <span id="total-time">00:00</span></div>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
                 <button class="icon-btn" onclick="playPrevious()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon></svg></button>
@@ -170,11 +145,11 @@
 
     <script>
         const recitersList = [
-            { id: "husary", nameAr: "محمود خليل الحصري", image: "https://h.top4top.io/p_3812jamsy0.jpg", title: "محمود خليل <strong>الحصري</strong>" },
-            { id: "minshawi", nameAr: "محمد صديق المنشاوي", image: "https://f.top4top.io/p_38068cvpd0.jpg", title: "محمد صديق <strong>المنشاوي</strong>" },
-            { id: "mustafa", nameAr: "مصطفى إسماعيل", image: "https://i.top4top.io/p_3812x41cu1.jpg", title: "مصطفى <strong>إسماعيل</strong>" },
-            { id: "banna", nameAr: "محمود علي البنا", image: "https://k.top4top.io/p_3812hi6wr3.jpeg", title: "محمود علي <strong>البنا</strong>" },
-            { id: "basit", nameAr: "عبد الباسط عبد الصمد", image: "https://j.top4top.io/p_38125kmkj2.jpeg", title: "عبد الباسط <strong>عبد الصمد</strong>" }
+            { id: "husary", nameAr: "محمود خليل الحصري", image: "https://h.top4top.io/p_3812jamsy0.jpg" },
+            { id: "minshawi", nameAr: "محمد صديق المنشاوي", image: "https://f.top4top.io/p_38068cvpd0.jpg" },
+            { id: "mustafa", nameAr: "مصطفى إسماعيل", image: "https://i.top4top.io/p_3812x41cu1.jpg" },
+            { id: "banna", nameAr: "محمود علي البنا", image: "https://k.top4top.io/p_3812hi6wr3.jpeg" },
+            { id: "basit", nameAr: "عبد الباسط عبد الصمد", image: "https://j.top4top.io/p_38125kmkj2.jpeg" }
         ];
 
         const editionsConfig = {
@@ -189,38 +164,40 @@
             play: '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>',
             pause: '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>',
             loading: '<svg class="loading-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>',
-            sun: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>',
-            moon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>'
+            sun: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>',
+            moon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>'
         };
 
         let currentTheme = 'light', currentSheikhId = "husary", currentEdition = 1;
         let activeSurahsData = [], playingSurahId = null, playingSheikhId = null, isBuffering = false;
         let audioInstance = new Audio();
 
-        // --- تحديث الواجهة الذكي (Sync UI) ---
+        // --- المزامنة الذكية ---
         function syncUIWithAudioState() {
             const isPlaying = !audioInstance.paused;
             const statusIcon = isBuffering ? icons.loading : (isPlaying ? icons.pause : icons.play);
 
-            // 1. زر المشغل
             document.getElementById('player-play-btn').innerHTML = statusIcon;
 
-            // 2. قائمة السور
             document.querySelectorAll('.surah-row').forEach(row => {
                 const sId = parseInt(row.getAttribute('data-id'));
-                const btn = row.querySelector('.play-btn-cell');
+                const playBtn = row.querySelector('.play-cell');
+                const loadBtn = row.querySelector('.load-cell');
+                
+                // شرط المزامنة: نفس الشيخ ونفس رقم السورة (بغض النظر عن الختمة)
                 if (sId === playingSurahId && currentSheikhId === playingSheikhId) {
                     row.classList.add('active-row');
-                    btn.classList.add('playing-icon');
-                    btn.innerHTML = statusIcon;
+                    playBtn.classList.add('playing-icon');
+                    playBtn.innerHTML = isPlaying ? icons.pause : icons.play;
+                    loadBtn.style.display = isBuffering ? 'flex' : 'none';
                 } else {
                     row.classList.remove('active-row');
-                    btn.classList.remove('playing-icon');
-                    btn.innerHTML = icons.play;
+                    playBtn.classList.remove('playing-icon');
+                    playBtn.innerHTML = icons.play;
+                    loadBtn.style.display = 'none';
                 }
             });
 
-            // 3. أيقونة الشيخ
             document.querySelectorAll('.sheikh-item').forEach(item => {
                 const sId = item.getAttribute('data-id');
                 let badge = item.querySelector('.playing-badge');
@@ -241,15 +218,13 @@
                 activeSurahsData = data;
                 localStorage.setItem(cacheKey, JSON.stringify(data));
                 renderSurahsList();
-            } catch (e) { console.error("Data Load Error"); }
+            } catch (e) { console.error("Error"); }
         }
 
         function renderSheikhCarousel() {
             document.getElementById('sheikh-carousel').innerHTML = recitersList.map(s => `
                 <div class="sheikh-item ${s.id === currentSheikhId ? 'active' : ''}" data-id="${s.id}" onclick="selectSheikh('${s.id}')">
-                    <div class="sheikh-avatar-container">
-                        <img src="${s.image}" class="sheikh-avatar-img">
-                    </div>
+                    <div class="sheikh-avatar-container"><img src="${s.image}" class="sheikh-avatar-img"></div>
                     <div style="font-size:0.65rem; font-weight:700; margin-top:6px;">${s.nameAr}</div>
                 </div>`).join('');
             syncUIWithAudioState();
@@ -262,8 +237,9 @@
                         <span class="surah-number">${String(s.id).padStart(3, '0')}</span>
                         <span class="surah-name">سورة ${s.name}</span>
                     </div>
-                    <div style="display:flex; gap:5px;">
-                        <button class="icon-btn play-btn-cell" onclick="playSurah(${s.id}, '${s.url}', '${s.name}')">${icons.play}</button>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div class="icon-btn load-cell" style="display:none;">${icons.loading}</div>
+                        <button class="icon-btn play-cell" onclick="playSurah(${s.id}, '${s.url}', '${s.name}')">${icons.play}</button>
                     </div>
                 </div>`).join('');
             syncUIWithAudioState();
@@ -282,9 +258,7 @@
         function renderEditionSelector() {
             const configs = editionsConfig[currentSheikhId];
             document.getElementById('pills-container').innerHTML = Object.keys(configs).map(key => `
-                <div class="pill-item ${currentEdition == key ? 'active' : ''}" onclick="switchEdition(${key})">
-                    ${configs[key].pill}
-                </div>`).join('');
+                <div class="pill-item ${currentEdition == key ? 'active' : ''}" onclick="switchEdition(${key})">${configs[key].pill}</div>`).join('');
         }
 
         async function switchEdition(num) {
@@ -329,13 +303,11 @@
             }
         }
 
-        // أحداث الصوت
         audioInstance.addEventListener('waiting', () => { isBuffering = true; syncUIWithAudioState(); });
         audioInstance.addEventListener('playing', () => { isBuffering = false; syncUIWithAudioState(); });
         audioInstance.addEventListener('play', () => syncUIWithAudioState());
         audioInstance.addEventListener('pause', () => syncUIWithAudioState());
         audioInstance.onended = () => playNext();
-
         audioInstance.ontimeupdate = () => {
             if (audioInstance.duration) {
                 const pct = (audioInstance.currentTime / audioInstance.duration) * 100;
@@ -345,12 +317,7 @@
             }
         };
 
-        function formatTime(s) {
-            const m = Math.floor(s / 60), sec = Math.floor(s % 60);
-            return `${m}:${sec < 10 ? '0' + sec : sec}`;
-        }
-
-        // شريط السيك بار (التمرير)
+        function formatTime(s) { const m = Math.floor(s/60), sec = Math.floor(s%60); return `${m}:${sec < 10 ? '0'+sec : sec}`; }
         document.getElementById('progress-container').onclick = (e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const pct = (e.clientX - rect.left) / rect.width;
@@ -358,7 +325,7 @@
         };
 
         (async () => {
-            toggleTheme(); toggleTheme(); // تهيئة أيقونة الثيم
+            toggleTheme(); toggleTheme();
             await selectSheikh('husary');
         })();
     </script>
