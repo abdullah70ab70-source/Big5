@@ -88,7 +88,7 @@
         .surah-info { display: flex; align-items: center; gap: 12px; }
         .surah-number { font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; min-width: 25px; }
         .surah-name { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
-        .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; }
         .playing-icon { color: var(--accent-gold) !important; }
 
         /* المشغل */
@@ -172,7 +172,8 @@
             pause: '<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>',
             loading: '<svg class="loading-spin" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>',
             sun: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>',
-            moon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>'
+            moon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
+            download: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'
         };
 
         let currentTheme = 'light', currentSheikhId = "husary", currentEdition = 1;
@@ -187,19 +188,17 @@
             document.querySelectorAll('.surah-row').forEach(row => {
                 const sId = parseInt(row.getAttribute('data-id'));
                 const playBtn = row.querySelector('.play-cell');
-                const loadCell = row.querySelector('.load-cell');
                 const isCurrentActive = (sId === playingSurahId && currentSheikhId === playingSheikhId && currentEdition === playingEditionId);
 
                 if (isCurrentActive) {
                     row.classList.add('active-row');
                     playBtn.classList.add('playing-icon');
-                    playBtn.innerHTML = isPlaying ? icons.pause : icons.play;
-                    loadCell.style.display = isBuffering ? 'flex' : 'none';
+                    // استبدال أيقونة التشغيل بالتحميل إذا كان مؤقتاً أو بالإيقاف المؤقت إذا كان يعمل
+                    playBtn.innerHTML = isBuffering ? icons.loading : (isPlaying ? icons.pause : icons.play);
                 } else {
                     row.classList.remove('active-row');
                     playBtn.classList.remove('playing-icon');
                     playBtn.innerHTML = icons.play;
-                    loadCell.style.display = 'none';
                 }
             });
 
@@ -243,7 +242,7 @@
                         <span class="surah-name">سورة ${s.name}</span>
                     </div>
                     <div style="display:flex; align-items:center; gap:12px;">
-                        <div class="load-cell" style="display:none; align-items:center;">${icons.loading}</div>
+                        <a href="${s.url}" download="سورة_${s.name}.mp3" target="_blank" class="icon-btn" title="تحميل السورة">${icons.download}</a>
                         <button class="icon-btn play-cell" onclick="playSurah(${s.id}, '${s.url}', '${s.name}')">${icons.play}</button>
                     </div>
                 </div>`).join('');
@@ -338,7 +337,7 @@
         
         progressContainer.addEventListener('touchstart', () => isDragging = true);
         window.addEventListener('touchmove', (e) => { if (isDragging) seek(e); });
-        window.addEventListener('touchend', (e) => { if (isDragging) { isDragging = false; } }); // Touchend handling can be tricky, click is safer for final jump
+        window.addEventListener('touchend', (e) => { if (isDragging) { isDragging = false; } }); 
 
         progressContainer.addEventListener('click', (e) => { audioInstance.currentTime = seek(e) * audioInstance.duration; });
 
