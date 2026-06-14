@@ -44,7 +44,6 @@
         
         .container { width: 100%; max-width: 480px; margin: 0 auto; padding: 8px 16px; }
 
-        /* تعديلات الشريط العلوي: نزول للأسفل قليلاً وتصغير الأزرار */
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 8px; }
         .top-btn { 
             background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); 
@@ -96,7 +95,6 @@
         .surah-number { font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; min-width: 25px; }
         .surah-name { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
         
-        /* الأزرار الدائرية للسور */
         .surah-actions { display: flex; align-items: center; gap: 8px; }
         .surah-action-btn { 
             width: 34px; height: 34px; border-radius: 50%; 
@@ -206,6 +204,16 @@
     </div>
 
     <script>
+        // مصفوفة أسماء السور باللغة الإنجليزية (الترتيب مطابق لرقم السورة)
+        const surahNamesEn = [
+            "", "Al-Fatihah", "Al-Baqarah", "Ali 'Imran", "An-Nisa", "Al-Ma'idah", "Al-An'am", "Al-A'raf", "Al-Anfal", "At-Tawbah", "Yunus", "Hud", "Yusuf", "Ar-Ra'd", "Ibrahim", "Al-Hijr", "An-Nahl", "Al-Isra", "Al-Kahf", "Maryam", "Taha",
+            "Al-Anbiya", "Al-Hajj", "Al-Mu'minun", "An-Nur", "Al-Furqan", "Ash-Shu'ara", "An-Naml", "Al-Qasas", "Al-'Ankabut", "Ar-Rum", "Luqman", "As-Sajdah", "Al-Ahzab", "Saba", "Fatir", "Ya-Sin", "As-Saffat", "Sad", "Az-Zumar", "Ghafir",
+            "Fussilat", "Ash-Shura", "Az-Zukhruf", "Ad-Dukhan", "Al-Jathiyah", "Al-Ahqaf", "Muhammad", "Al-Fath", "Al-Hujurat", "Qaf", "Adh-Dhariyat", "At-Tur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid", "Al-Mujadila", "Al-Hashr", "Al-Mumtahanah",
+            "As-Saff", "Al-Jumu'ah", "Al-Munafiqun", "At-Taghabun", "At-Talaq", "At-Tahrim", "Al-Mulk", "Al-Qalam", "Al-Haqqah", "Al-Ma'arij", "Nuh", "Al-Jinn", "Al-Muzzammil", "Al-Muddaththir", "Al-Qiyamah", "Al-Insan", "Al-Mursalat", "An-Naba", "An-Nazi'at", "'Abasa",
+            "At-Takwir", "Al-Infitar", "Al-Mutaffifin", "Al-Inshiqaq", "Al-Buruj", "At-Tariq", "Al-A'la", "Al-Ghashiyah", "Al-Fajr", "Al-Balad", "Ash-Shams", "Al-Layl", "Ad-Duhaa", "Ash-Sharh", "At-Tin", "Al-'Alaq", "Al-Qadr", "Al-Bayyinah", "Az-Zalzalah", "Al-'Adiyat",
+            "Al-Qari'ah", "At-Takathur", "Al-'Asr", "Al-Humazah", "Al-Fil", "Quraysh", "Al-Ma'un", "Al-Kawthar", "Al-Kafirun", "An-Nasr", "Al-Masad", "Al-Ikhlas", "Al-Falaq", "An-Nas"
+        ];
+
         // قواميس الترجمة والتكوين
         const translations = {
             ar: {
@@ -255,22 +263,25 @@
         let audioInstance = new Audio();
         let activeDownloads = {};
 
-        // --- نظام التبديل بين اللغات ---
+        // جلب اسم السورة حسب اللغة المحددة
+        function getSurahName(id, nameAr) {
+            return currentLang === 'ar' ? nameAr : surahNamesEn[id];
+        }
+
         function toggleLanguage() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
             document.documentElement.lang = currentLang;
             document.getElementById('lang-label').innerText = translations[currentLang].langLabel;
             
-            // عكس أزرار المشغل لتتوافق مع اتجاه اللغة
             document.getElementById('player-controls').style.flexDirection = currentLang === 'ar' ? 'row-reverse' : 'row';
 
-            // إعادة عرض البيانات باللغة الجديدة (سيبقى اسم السورة بالعربية كما هو بالمصدر)
             selectSheikh(currentSheikhId);
             
-            // تحديث اسم السورة في المشغل إذا كان يعمل
+            // تحديث اسم السورة في المشغل لتكون مترجمة بالكامل
             if (playingSurahId) {
-                const sName = activeSurahsData.find(s => s.id === playingSurahId)?.name || "";
+                const sData = activeSurahsData.find(s => s.id === playingSurahId);
+                const sName = getSurahName(sData.id, sData.name);
                 document.getElementById('player-track-title').innerText = `${translations[currentLang].surahPrefix} ${sName}`;
             }
         }
@@ -336,36 +347,42 @@
         }
 
         function renderSurahsList() {
-            document.getElementById('main-surah-list').innerHTML = activeSurahsData.map(s => `
+            document.getElementById('main-surah-list').innerHTML = activeSurahsData.map(s => {
+                const sName = getSurahName(s.id, s.name);
+                return `
                 <div class="surah-row" data-id="${s.id}">
                     <div class="surah-info">
                         <span class="surah-number">${String(s.id).padStart(3, '0')}</span>
-                        <span class="surah-name">${translations[currentLang].surahPrefix} ${s.name}</span>
+                        <span class="surah-name">${translations[currentLang].surahPrefix} ${sName}</span>
                     </div>
                     <div class="surah-actions" style="flex-direction: ${currentLang === 'ar' ? 'row' : 'row-reverse'};">
-                        <button class="surah-action-btn play-cell" onclick="playSurah(${s.id}, '${s.url}', '${s.name}')">${icons.play}</button>
-                        <button class="surah-action-btn" onclick="startDownload(${s.id}, '${s.url}', '${s.name}')" title="تحميل">
+                        <button class="surah-action-btn play-cell" onclick="playSurah(${s.id}, '${s.url}')">${icons.play}</button>
+                        <button class="surah-action-btn" onclick="startDownload(${s.id}, '${s.url}')" title="تحميل">
                             ${icons.download}
                         </button>
                     </div>
-                </div>`).join('');
+                </div>`;
+            }).join('');
             syncUIWithAudioState();
         }
 
-        // --- نظام التحميل مع النافذة المنبثقة (Popup) ---
         const dlModal = document.getElementById('download-modal');
         const dlFill = document.getElementById('dl-progress-fill');
         const dlPct = document.getElementById('dl-modal-pct');
         const dlTitle = document.getElementById('dl-modal-title');
 
-        async function startDownload(id, url, name) {
+        async function startDownload(id, url) {
             if (activeDownloads[id]) return;
             activeDownloads[id] = true;
+            
+            // جلب الاسم للعرض في نافذة التحميل
+            const sData = activeSurahsData.find(s => s.id === id);
+            const sName = getSurahName(id, sData.name);
 
             dlModal.style.display = 'flex';
             dlFill.style.width = '0%';
             dlPct.innerText = '0%';
-            dlTitle.innerText = `${translations[currentLang].downloading} ${name}...`;
+            dlTitle.innerText = `${translations[currentLang].downloading} ${sName}...`;
 
             try {
                 const response = await fetch(url, { mode: 'cors' });
@@ -393,13 +410,13 @@
                 
                 const blob = new Blob(chunks, { type: 'audio/mpeg' });
                 const objectUrl = URL.createObjectURL(blob);
-                triggerNativeDownload(objectUrl, `${translations[currentLang].surahPrefix}_${name}.mp3`);
+                triggerNativeDownload(objectUrl, `${translations[currentLang].surahPrefix}_${sName}.mp3`);
                 URL.revokeObjectURL(objectUrl);
                 
                 finishDownloadUI(id);
 
             } catch (err) {
-                triggerNativeDownload(url, `${translations[currentLang].surahPrefix}_${name}.mp3`);
+                triggerNativeDownload(url, `${translations[currentLang].surahPrefix}_${sName}.mp3`);
                 finishDownloadUI(id);
             }
         }
@@ -457,12 +474,17 @@
             renderEditionSelector(); await loadEditionData(currentSheikhId, num);
         }
 
-        function playSurah(id, url, name) {
+        function playSurah(id, url) {
             if (playingSurahId === id && playingSheikhId === currentSheikhId && playingEditionId === currentEdition) { togglePlayPause(); return; }
             playingSurahId = id; playingSheikhId = currentSheikhId; playingEditionId = currentEdition;
             audioInstance.src = url; audioInstance.play();
+            
+            // جلب الاسم للعرض في المشغل
+            const sData = activeSurahsData.find(s => s.id === id);
+            const sName = getSurahName(id, sData.name);
+            
             document.getElementById('global-player').style.display = 'block';
-            document.getElementById('player-track-title').innerText = `${translations[currentLang].surahPrefix} ${name}`;
+            document.getElementById('player-track-title').innerText = `${translations[currentLang].surahPrefix} ${sName}`;
             syncUIWithAudioState();
         }
 
@@ -473,12 +495,12 @@
 
         function playNext() {
             const idx = activeSurahsData.findIndex(s => s.id === playingSurahId);
-            if (idx < activeSurahsData.length - 1) { const next = activeSurahsData[idx + 1]; playSurah(next.id, next.url, next.name); }
+            if (idx < activeSurahsData.length - 1) { const next = activeSurahsData[idx + 1]; playSurah(next.id, next.url); }
         }
 
         function playPrevious() {
             const idx = activeSurahsData.findIndex(s => s.id === playingSurahId);
-            if (idx > 0) { const prev = activeSurahsData[idx - 1]; playSurah(prev.id, prev.url, prev.name); }
+            if (idx > 0) { const prev = activeSurahsData[idx - 1]; playSurah(prev.id, prev.url); }
         }
 
         audioInstance.addEventListener('waiting', () => { isBuffering = true; syncUIWithAudioState(); });
@@ -520,7 +542,6 @@
         progressContainer.addEventListener('click', (e) => { audioInstance.currentTime = seek(e) * audioInstance.duration; });
 
         (async () => {
-            // تهيئة التطبيق
             document.getElementById('theme-toggle-btn').innerHTML = currentTheme === 'dark' ? icons.moon : icons.sun;
             await selectSheikh('husary');
         })();
