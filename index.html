@@ -3,7 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Egy Quran</title>
+    
+    <!-- العنوان ووصف الموقع -->
+    <title>Egy Quran - استمع وحمل القرآن الكريم بأصوات كبار القراء</title>
+    <meta name="description" content="منصة Egy Quran تتيح لك الاستماع وتحميل القرآن الكريم بجودة عالية وبأصوات كبار القراء مثل الحصري، المنشاوي، عبد الباسط، مع دعم التشغيل التلقائي والتكرار.">
+    <meta name="keywords" content="قرآن كريم, استماع القرآن, تحميل القرآن, مصحف كبار القراء, الحصري, المنشاوي, عبد الباسط عبد الصمد, mp3 قرآن, Egy Quran">
+    <meta http-equiv="content-language" content="ar">
+
+    <!-- إرشاد عناكب البحث -->
+    <link rel="canonical" href="https://egyquran.com/">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph (للمشاركة على فيسبوك، واتساب، وتليجرام) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://egyquran.com/">
+    <meta property="og:title" content="Egy Quran - القرآن الكريم بأصوات كبار القراء">
+    <meta property="og:description" content="استمع وحمل سور القرآن الكريم بجودة عالية وتجربة استخدام سلسة بدون إعلانات مزعجة.">
+    <meta property="og:image" content="https://egyquran.com/icon.png">
+
+    <!-- Twitter Cards (للمشاركة على تويتر/X) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Egy Quran - القرآن الكريم بأصوات كبار القراء">
+    <meta name="twitter:description" content="استمع وحمل سور القرآن الكريم بجودة عالية وتجربة استخدام سلسة.">
+    <meta name="twitter:image" content="https://egyquran.com/icon.png">
+
+    <!-- البيانات المهيكلة (Schema Markup) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Egy Quran",
+      "url": "https://egyquran.com/",
+      "description": "تطبيق ويب مجاني للاستماع وتحميل القرآن الكريم بأصوات كبار القراء بوضوح وعالية الجودة.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "inLanguage": "ar",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#c5a059">
@@ -12,12 +53,13 @@
     <meta name="apple-mobile-web-app-title" content="Egy Quran">
     <link rel="apple-touch-icon" href="icon.png">
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6JJ4WGLT89"></script>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G8Q3DV5BJF"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-6JJ4WGLT89');
+      gtag('config', 'G-G8Q3DV5BJF');
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -77,7 +119,7 @@
         .playing-badge::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--accent-gold); border-radius: 50%; z-index: -1; animation: pulse-ring 1.5s infinite; }
         .equalizer-bar { width: 2px; background: #fff; height: 10px; transform-origin: bottom; }
 
-        /* الختمات (إطارات أفقية) والمسافة السفلية المكبرة */
+        /* الختمات */
         .edition-dropdown-wrapper { position: relative; margin: 0px 5px 25px 5px; z-index: 10; }
         .edition-list-wrapper { width: 100%; }
         .edition-list { display: flex; gap: 10px; overflow-x: auto; padding: 2px 5px 5px 5px; scrollbar-width: none; }
@@ -127,7 +169,7 @@
         .play-toggle-btn svg { width: 16px !important; height: 16px !important; }
         .icon-btn svg { width: 20px; height: 20px; }
 
-        /* قائمة التحكم في التشغيل - معدلة لتصبح أصغر */
+        /* قائمة التحكم في التشغيل */
         .playback-menu {
             position: absolute; bottom: 100%; right: 0; margin-bottom: 10px; width: 120px;
             background: var(--bg-mid); border: 1px solid var(--glass-border); border-radius: 10px;
