@@ -5,5 +5,12 @@
   "display": "standalone",
   "background_color": "#f8faf9",
   "theme_color": "#c5a059",
-  "icons": [ { "src": "hosary.jpg", "sizes": "192x192", "type": "image/jpeg" } ]
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
