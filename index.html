@@ -88,6 +88,21 @@
         
         .container { width: 100%; max-width: 480px; margin: 0 auto; padding: 16px; }
 
+        /* شاشة الترحيب */
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
+        .splash-logo { width: 110px; height: 110px; border-radius: 50%; border: 2px solid var(--accent-gold); margin-bottom: 20px; animation: pulse-ring 2s infinite; box-shadow: 0 10px 30px rgba(197, 160, 89, 0.3); }
+        .splash-title { font-size: 1.8rem; font-weight: 700; color: var(--accent-gold); letter-spacing: 1px; }
+
+        /* تنبيه الاستئناف */
+        #resume-banner { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150px); background: var(--player-bg); border: 1px solid var(--accent-gold); padding: 12px 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 10000; width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; visibility: hidden; backdrop-filter: blur(10px); }
+        #resume-banner.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
+        .resume-text { font-size: 0.85rem; font-weight: 700; color: var(--text-main); text-align: center; line-height: 1.5; }
+        .resume-actions { display: flex; gap: 10px; justify-content: center; }
+        .resume-btn { background: var(--accent-gold); color: #fff; border: none; padding: 6px 20px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3); transition: 0.2s; }
+        .resume-btn:active { transform: scale(0.95); }
+        .resume-close { background: var(--glass-bg); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 6px 20px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+        .resume-close:active { transform: scale(0.95); }
+
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
         .top-bar-group { display: flex; gap: 8px; align-items: center; }
         .top-btn { background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-weight: 700; font-size: 0.75rem; text-decoration: none; }
@@ -195,6 +210,21 @@
 </head>
 <body>
 
+    <!-- شاشة الترحيب -->
+    <div id="splash-screen">
+        <img src="icon.png" class="splash-logo" alt="Egy Quran">
+        <div class="splash-title">Egy Quran</div>
+    </div>
+
+    <!-- رسالة استئناف الاستماع -->
+    <div id="resume-banner">
+        <div class="resume-text" id="resume-text">هل تود إكمال الاستماع؟</div>
+        <div class="resume-actions">
+            <button class="resume-btn" id="resume-btn-yes" onclick="resumePlayback()">متابعة الاستماع</button>
+            <button class="resume-close" id="resume-btn-no" onclick="closeResumeBanner()">إلغاء</button>
+        </div>
+    </div>
+
     <!-- رسالة التوست -->
     <div id="toast" class="toast"></div>
 
@@ -202,12 +232,22 @@
         <div class="top-bar">
             <div class="top-bar-group">
                 <button class="top-btn" onclick="toggleTheme()" id="theme-toggle-btn"></button>
-                <a href="mailto:egyquran.com@gmail.com" class="top-btn email-btn" title="تواصل معنا">
+                <a href="mailto:your-email@example.com" class="top-btn email-btn" title="تواصل معنا">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                         <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
                 </a>
+                <!-- زر تثبيت التطبيق بتصميم جديد (شبكة تطبيقات مع زر +) -->
+                <button class="top-btn" id="install-btn" style="display: none;" title="تثبيت التطبيق">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="4" y="4" width="6" height="6" rx="1"></rect>
+                      <rect x="14" y="4" width="6" height="6" rx="1"></rect>
+                      <rect x="4" y="14" width="6" height="6" rx="1"></rect>
+                      <line x1="17" y1="14" x2="17" y2="20"></line>
+                      <line x1="14" y1="17" x2="20" y2="17"></line>
+                    </svg>
+                </button>
             </div>
             <button class="top-btn" onclick="toggleLanguage()"><span id="lang-label">EN</span></button>
         </div>
@@ -274,7 +314,7 @@
     </div>
 
     <script>
-        // دوال التوست
+        // دوال التوست والتنبيهات
         let toastTimeout;
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -282,6 +322,26 @@
             toast.classList.add('show');
             clearTimeout(toastTimeout);
             toastTimeout = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // إخفاء شاشة الترحيب
+        function hideSplashScreen() {
+            const splash = document.getElementById('splash-screen');
+            if(splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => { splash.style.display = 'none'; }, 500);
+            }
+        }
+
+        // التعامل مع تنبيه استئناف الاستماع
+        function closeResumeBanner() {
+            document.getElementById('resume-banner').classList.remove('show');
+        }
+        function resumePlayback() {
+            closeResumeBanner();
+            if(window.resumeData) {
+                playSurah(window.resumeData.id, window.resumeData.url);
+            }
         }
 
         const surahNamesEn = [
@@ -294,8 +354,8 @@
         ];
 
         const translations = {
-            ar: { langLabel: "EN", sheikhPrefix: "الشيخ", surahPrefix: "سورة", downloading: "جاري تحميل", downloadComplete: "تم التحميل بنجاح!" },
-            en: { langLabel: "AR", sheikhPrefix: "Sheikh", surahPrefix: "Surah", downloading: "Downloading", downloadComplete: "Download Complete!" }
+            ar: { langLabel: "EN", sheikhPrefix: "الشيخ", surahPrefix: "سورة", downloading: "جاري تحميل", downloadComplete: "تم التحميل بنجاح!", resumeBtn: "متابعة الاستماع", cancelBtn: "إلغاء" },
+            en: { langLabel: "AR", sheikhPrefix: "Sheikh", surahPrefix: "Surah", downloading: "Downloading", downloadComplete: "Download Complete!", resumeBtn: "Resume Listening", cancelBtn: "Cancel" }
         };
         let currentLang = 'ar';
 
@@ -342,6 +402,11 @@
         let currentTheme = 'light', currentSheikhId = "husary", currentEdition = 1;
         let activeSurahsData = [], playingSurahId = null, playingSheikhId = null, playingEditionId = null, isBuffering = false;
         let audioInstance = new Audio();
+        
+        // متغيرات للتحميل المسبق (Preloading)
+        let preloadAudioObj = new Audio(); 
+        let preloadedSurahId = null;
+
         let activeDownloads = {};
         let savedReciterEditions = {}; 
 
@@ -355,9 +420,13 @@
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
             document.documentElement.lang = currentLang;
             document.documentElement.style.setProperty('--dir', document.documentElement.dir);
+            
             document.getElementById('lang-label').innerText = translations[currentLang].langLabel;
+            document.getElementById('resume-btn-yes').innerText = translations[currentLang].resumeBtn;
+            document.getElementById('resume-btn-no').innerText = translations[currentLang].cancelBtn;
+            
             selectSheikh(currentSheikhId);
-            setPlaybackMode(playbackMode); // لتحديث نصوص المشغل
+            setPlaybackMode(playbackMode);
             if (playingSurahId) {
                 const sData = activeSurahsData.find(s => s.id === playingSurahId);
                 if(sData) document.getElementById('player-track-title').innerText = `${translations[currentLang].surahPrefix} ${getSurahName(sData.id, sData.name)}`;
@@ -440,15 +509,14 @@
             document.querySelectorAll('.sheikh-item').forEach(item => {
                 const sId = item.getAttribute('data-id');
                 let badge = item.querySelector('.playing-badge');
-                if (sId === playingSheikhId && isPlaying) {
+                if (sId === playingSheikhId && isPlaying && !isBuffering) {
                     if (!badge) item.querySelector('.sheikh-avatar-container').insertAdjacentHTML('beforeend', `<div class="playing-badge"><div class="equalizer-bar" style="animation: equalize 0.8s infinite alternate"></div><div class="equalizer-bar" style="animation: equalize 0.5s infinite alternate; animation-delay:0.1s"></div><div class="equalizer-bar" style="animation: equalize 0.7s infinite alternate; animation-delay:0.2s"></div></div>`);
                 } else if (badge) badge.remove();
             });
 
-            // تحديث الدائرة النشطة لضمان ظهورها فقط مع القارئ والختمة التي تعمل حالياً
             document.querySelectorAll('.edition-pill').forEach(pill => {
                 const pillKey = pill.getAttribute('data-key');
-                const isPlayingThisEdition = (currentSheikhId === playingSheikhId && pillKey == playingEditionId && isPlaying);
+                const isPlayingThisEdition = (currentSheikhId === playingSheikhId && pillKey == playingEditionId && isPlaying && !isBuffering);
                 let dot = pill.querySelector('.active-dot');
                 if (isPlayingThisEdition) {
                     if (!dot) pill.insertAdjacentHTML('beforeend', `<span class="active-dot"></span>`);
@@ -550,7 +618,7 @@
             const configs = editionsConfig[currentSheikhId]; const keys = Object.keys(configs);
             const pills = keys.map(key => `<div class="edition-pill ${currentEdition == key ? 'active' : ''}" data-key="${key}" onclick="selectEditionDropdown(${key}, event)">${currentLang === 'ar' ? configs[key].pillAr : configs[key].pillEn}</div>`).join('');
             document.getElementById('edition-dropdown-wrapper').innerHTML = `<div class="edition-list-wrapper"><div class="edition-list">${pills}</div></div>`;
-            syncUIWithAudioState(); // تحديث الدائرة فور بناء القائمة
+            syncUIWithAudioState(); 
         }
 
         async function selectEditionDropdown(num, event) {
@@ -563,9 +631,12 @@
         function playSurah(id, url) {
             if (playingSurahId === id && playingSheikhId === currentSheikhId && playingEditionId === currentEdition) { togglePlayPause(); return; }
             playingSurahId = id; playingSheikhId = currentSheikhId; playingEditionId = currentEdition;
+            
+            isBuffering = true; 
+            
             audioInstance.src = url; 
             audioInstance.loop = (playbackMode === 'loop');
-            audioInstance.play();
+            audioInstance.play().catch(e => console.log(e));
             
             localStorage.setItem('lastPlayedQuran', JSON.stringify({ sheikh: playingSheikhId, edition: playingEditionId, surah: playingSurahId }));
             const sData = activeSurahsData.find(s => s.id === id); const sName = getSurahName(id, sData.name);
@@ -581,15 +652,51 @@
             }
         }
 
-        function togglePlayPause() { if (audioInstance.paused && audioInstance.src) audioInstance.play(); else audioInstance.pause(); syncUIWithAudioState(); }
+        function togglePlayPause() { 
+            if (audioInstance.paused && audioInstance.src) {
+                isBuffering = true;
+                syncUIWithAudioState();
+                audioInstance.play().catch(e => console.log(e));
+            } else {
+                audioInstance.pause(); 
+            }
+        }
         function playNext() { const idx = activeSurahsData.findIndex(s => s.id === playingSurahId); if (idx < activeSurahsData.length - 1) { const next = activeSurahsData[idx + 1]; playSurah(next.id, next.url); } }
         function playPrevious() { const idx = activeSurahsData.findIndex(s => s.id === playingSurahId); if (idx > 0) { const prev = activeSurahsData[idx - 1]; playSurah(prev.id, prev.url); } }
 
         audioInstance.addEventListener('waiting', () => { isBuffering = true; syncUIWithAudioState(); });
         audioInstance.addEventListener('playing', () => { isBuffering = false; syncUIWithAudioState(); });
-        audioInstance.addEventListener('play', () => { isBuffering = false; syncUIWithAudioState(); });
-        audioInstance.addEventListener('pause', () => syncUIWithAudioState());
+        audioInstance.addEventListener('play', () => { isBuffering = true; syncUIWithAudioState(); });
+        audioInstance.addEventListener('pause', () => { isBuffering = false; syncUIWithAudioState(); });
         
+        // معالجة خطأ الإنترنت واستمرار الدائرة
+        audioInstance.addEventListener('error', () => {
+            if (!navigator.onLine) {
+                isBuffering = true; 
+            } else {
+                isBuffering = false;
+            }
+            syncUIWithAudioState();
+            showToast(currentLang === 'ar' ? "خطأ في الاتصال، يرجى التحقق من الإنترنت" : "Network error, please check connection");
+        });
+
+        // محاولة إعادة التشغيل التلقائي عند عودة الإنترنت
+        window.addEventListener('online', () => {
+            if (isBuffering && playingSurahId && !audioInstance.paused) {
+                audioInstance.load();
+                audioInstance.play().catch(e => console.log(e));
+                showToast(currentLang === 'ar' ? "تمت استعادة الاتصال، جاري التشغيل..." : "Connection restored, playing...");
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            if (!audioInstance.paused || isBuffering) {
+                isBuffering = true;
+                syncUIWithAudioState();
+                showToast(currentLang === 'ar' ? "انقطع الاتصال بالإنترنت" : "Internet connection lost");
+            }
+        });
+
         audioInstance.onended = () => {
             if (playbackMode === 'autonext') {
                 playNext();
@@ -601,6 +708,18 @@
                 document.getElementById('progress-bar-fill').style.width = ((audioInstance.currentTime / audioInstance.duration) * 100) + '%';
                 document.getElementById('curr-time').innerText = formatTime(audioInstance.currentTime);
                 document.getElementById('total-time').innerText = formatTime(audioInstance.duration);
+
+                if (playbackMode === 'autonext' && (audioInstance.duration - audioInstance.currentTime) < 15) {
+                    const idx = activeSurahsData.findIndex(s => s.id === playingSurahId);
+                    if (idx !== -1 && idx < activeSurahsData.length - 1) {
+                        const nextSurah = activeSurahsData[idx + 1];
+                        if (preloadedSurahId !== nextSurah.id) {
+                            preloadAudioObj.src = nextSurah.url;
+                            preloadAudioObj.preload = "auto";
+                            preloadedSurahId = nextSurah.id;
+                        }
+                    }
+                }
             }
         };
 
@@ -636,14 +755,64 @@
         
         progressContainer.addEventListener('click', (e) => { if(audioInstance.duration) audioInstance.currentTime = seek(e) * audioInstance.duration; });
 
+        // كود تشغيل زر "تثبيت التطبيق"
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').style.display = 'flex';
+        });
+
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                document.getElementById('install-btn').style.display = 'none';
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('install-btn').style.display = 'none';
+            showToast(currentLang === 'ar' ? 'تم تثبيت التطبيق بنجاح!' : 'App installed successfully!');
+        });
+
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(err => console.log('SW failed')); }); }
 
         (async () => {
             document.getElementById('theme-toggle-btn').innerHTML = currentTheme === 'dark' ? icons.moon : icons.sun;
-            setPlaybackMode('autonext'); // تفعيل وضع التشغيل التلقائي افتراضياً عند التحميل
-            let targetSheikh = 'husary'; const savedState = JSON.parse(localStorage.getItem('lastPlayedQuran'));
-            if(savedState) { targetSheikh = savedState.sheikh; savedReciterEditions[targetSheikh] = savedState.edition; playingSheikhId = savedState.sheikh; playingEditionId = savedState.edition; playingSurahId = savedState.surah; }
+            setPlaybackMode('autonext'); 
+            
+            let targetSheikh = 'husary'; 
+            const savedState = JSON.parse(localStorage.getItem('lastPlayedQuran'));
+            
+            if(savedState) { 
+                targetSheikh = savedState.sheikh; 
+                savedReciterEditions[targetSheikh] = savedState.edition; 
+                playingSheikhId = savedState.sheikh; 
+                playingEditionId = savedState.edition; 
+                playingSurahId = savedState.surah; 
+            }
+            
             await selectSheikh(targetSheikh);
+            
+            // إخفاء الشاشة الترحيبية بعد انتهاء جلب البيانات
+            hideSplashScreen();
+
+            // إظهار تنبيه الاستئناف إذا كان هناك سورة محفوظة من قبل
+            if(savedState && savedState.surah) {
+                const sData = activeSurahsData.find(s => s.id === savedState.surah);
+                if(sData && audioInstance.src === "") {
+                    const sName = getSurahName(sData.id, sData.name);
+                    const promptText = currentLang === 'ar' ? `هل تود إكمال الاستماع إلى سورة ${sName}؟` : `Resume listening to Surah ${sName}?`;
+                    document.getElementById('resume-text').innerText = promptText;
+                    document.getElementById('resume-banner').classList.add('show');
+                    
+                    window.resumeData = { id: sData.id, url: sData.url };
+                    
+                    setTimeout(() => closeResumeBanner(), 15000);
+                }
+            }
         })();
     </script>
 </body>
