@@ -1,4 +1,4 @@
-const CACHE_NAME = 'egy-quran-v3';
+const CACHE_NAME = 'egy-quran-v4';
 
 // قائمة بالملفات الأساسية
 const ASSETS = [
@@ -46,14 +46,14 @@ self.addEventListener('activate', (e) => {
     self.clients.claim(); // السيطرة على الصفحة فوراً
 });
 
-// حدث الجلب (Fetch) لمعالجة الريفريش وتشغيل الموقع بدون إنترنت
+// حدث الجلب (Fetch) 
 self.addEventListener('fetch', (e) => {
-    // عدم تخزين الصوتيات في ذاكرة الهاتف
-    if (e.request.url.includes('.mp3')) {
-        return; 
+    // 💡 (الحل) استثناء الصوتيات والبث المباشر (الراديو) تماماً من أوامر الحفظ
+    if (e.request.url.includes('.mp3') || e.request.url.includes('stream') || e.request.url.includes('radio')) {
+        return; // العودة فوراً وترك المتصفح يتعامل مع الرابط مباشرة من الإنترنت
     }
 
-    // 1. معالجة "الريفريش" والسحب للأسفل
+    // 1. معالجة "الريفريش" والسحب للأسفل عند انقطاع الإنترنت
     if (e.request.mode === 'navigate') {
         e.respondWith(
             fetch(e.request).catch(() => {
