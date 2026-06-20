@@ -1,0 +1,191 @@
+:root {
+    --bg-dark: #f8faf9; --bg-mid: #ffffff; --bg-light: #f0f4f2;
+    --accent-gold: #c5a059; --accent-hover: #b38f4d;
+    --text-main: #2c3e50; --text-muted: #7f8c8d;
+    --glass-bg: rgba(0, 0, 0, 0.04); --glass-border: rgba(0, 0, 0, 0.05);
+    --glass-active: rgba(197, 160, 89, 0.08);
+    --player-bg: rgba(255, 255, 255, 0.98);
+    --shadow-intensity: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-theme {
+    --bg-dark: #121212; --bg-mid: #1c1c1c; --bg-light: #252525;
+    --text-main: #ffffff; --text-muted: #9a9a9a;
+    --glass-bg: rgba(255, 255, 255, 0.06); --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-active: rgba(197, 160, 89, 0.12);
+    --player-bg: rgba(26, 26, 26, 0.98);
+    --shadow-intensity: rgba(0, 0, 0, 0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Cairo', sans-serif; background: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding-bottom: 140px; user-select: none; }
+
+.container { width: 100%; max-width: 480px; margin: 0 auto; padding: 16px; }
+
+/* شريط تثبيت التطبيق الانزلاقي */
+.install-banner {
+    position: fixed; top: 0; left: 50%; transform: translateX(-50%) translateY(-100%);
+    width: 100%; max-width: 480px; background: var(--player-bg); backdrop-filter: blur(15px);
+    border-bottom: 2px solid var(--accent-gold); box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    z-index: 10001; display: flex; align-items: center; padding: 12px 16px; gap: 12px;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.install-banner.show { transform: translateX(-50%) translateY(0); }
+.install-icon { width: 42px; height: 42px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.install-info { flex: 1; display: flex; flex-direction: column; }
+.install-title { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
+.install-desc { font-size: 0.65rem; color: var(--text-muted); line-height: 1.3; margin-top: 2px; }
+.install-action-btn { background: var(--accent-gold); color: #fff; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.75rem; cursor: pointer; box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3); transition: 0.2s; white-space: nowrap; }
+.install-action-btn:active { transform: scale(0.95); }
+.install-close-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 50%; transition: 0.2s; }
+.install-close-btn:hover { background: var(--glass-active); color: var(--text-main); }
+.install-close-btn svg { width: 18px; height: 18px; }
+
+/* تنبيه الاستئناف */
+#resume-banner { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150px); background: var(--player-bg); border: 1px solid var(--accent-gold); padding: 12px 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 10000; width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; visibility: hidden; backdrop-filter: blur(10px); }
+#resume-banner.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
+.resume-text { font-size: 0.85rem; font-weight: 700; color: var(--text-main); text-align: center; line-height: 1.5; }
+.resume-actions { display: flex; gap: 10px; justify-content: center; }
+.resume-btn { background: var(--accent-gold); color: #fff; border: none; padding: 6px 20px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3); transition: 0.2s; }
+.resume-btn:active { transform: scale(0.95); }
+.resume-close { background: var(--glass-bg); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 6px 20px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+.resume-close:active { transform: scale(0.95); }
+
+.top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
+.top-bar-group { display: flex; gap: 8px; align-items: center; }
+.top-btn { background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-weight: 700; font-size: 0.75rem; text-decoration: none; position: relative; }
+.top-btn:hover { background: var(--glass-active); color: var(--accent-gold); border-color: var(--accent-gold); }
+.top-btn svg { width: 18px; height: 18px; }
+.email-btn:hover, .email-btn:active { color: #3b82f6 !important; border-color: #3b82f6 !important; background: rgba(59, 130, 246, 0.08) !important; }
+
+/* تأثير الذبذبات لأيقونة الراديو عند التشغيل */
+.radio-active { color: var(--accent-gold) !important; border-color: var(--accent-gold) !important; background: var(--glass-active) !important; box-shadow: 0 0 12px rgba(197, 160, 89, 0.4); }
+@keyframes wave-fade { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+.radio-active .wave-inner { animation: wave-fade 1.5s infinite ease-in-out; }
+.radio-active .wave-outer { animation: wave-fade 1.5s infinite ease-in-out; animation-delay: 0.3s; }
+
+/* رسالة الإرشاد للراديو (التول تيب) والنقطة الحمراء */
+.radio-wrapper { position: relative; display: flex; align-items: center; justify-content: center; }
+.radio-tooltip {
+    position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%);
+    background: var(--accent-gold); color: #fff; padding: 6px 12px; border-radius: 8px;
+    font-size: 0.75rem; font-weight: 700; white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(197, 160, 89, 0.4);
+    opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100;
+}
+.radio-tooltip::before {
+    content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    border-width: 6px; border-style: solid; border-color: transparent transparent var(--accent-gold) transparent;
+}
+.radio-tooltip.show { opacity: 1; visibility: visible; animation: float-up-down 2s infinite ease-in-out; }
+@keyframes float-up-down { 0%, 100% { margin-top: 0; } 50% { margin-top: -5px; } }
+
+.radio-badge {
+    position: absolute; top: -2px; right: -2px; width: 10px; height: 10px;
+    background: #e74c3c; border-radius: 50%; border: 2px solid var(--bg-mid);
+    display: none; z-index: 2;
+}
+.radio-badge.show { display: block; animation: pulse-red 1.5s infinite; }
+body.dark-theme .radio-badge { border-color: var(--bg-dark); }
+@keyframes pulse-red { 
+    0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); } 
+    70% { box-shadow: 0 0 0 6px rgba(231, 76, 60, 0); } 
+    100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); } 
+}
+
+header { text-align: center; padding-bottom: 20px; }
+.header-img { height: 85px; width: 85px; border-radius: 50%; border: 2px solid var(--accent-gold); box-shadow: 0 4px 20px var(--shadow-intensity); object-fit: cover; margin-bottom: 10px; }
+header h1 { font-size: 1.25rem; font-weight: 300; }
+header h1 strong { font-weight: 700; color: var(--accent-gold); }
+header p { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+/* القراء */
+.sheikh-selector-wrapper { width: 100%; margin: 10px 0 5px 0; }
+.sheikh-list { display: flex; gap: 12px; overflow-x: auto; padding: 5px 5px 10px 5px; scrollbar-width: none; }
+.sheikh-list::-webkit-scrollbar { display: none; }
+.sheikh-item { background: var(--bg-mid); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; min-width: 95px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 3px 8px var(--shadow-intensity); }
+.sheikh-item.active { border-color: var(--accent-gold); background: var(--glass-active); transform: translateY(-2px); }
+.sheikh-avatar-container { position: relative; width: 50px; height: 50px; margin: 0 auto; }
+.sheikh-avatar-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.loading-spin { animation: spin 1s linear infinite; will-change: transform; display: block; }
+@keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
+@keyframes equalize { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
+
+.playing-badge { position: absolute; bottom: -3px; right: -3px; width: 22px; height: 22px; background: var(--accent-gold); border-radius: 50%; border: 2px solid var(--bg-mid); display: flex; align-items: flex-end; justify-content: center; gap: 2px; padding-bottom: 5px; }
+.playing-badge::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--accent-gold); border-radius: 50%; z-index: -1; animation: pulse-ring 1.5s infinite; }
+.equalizer-bar { width: 2px; background: #fff; height: 10px; transform-origin: bottom; }
+
+/* الختمات */
+.edition-dropdown-wrapper { position: relative; margin: 0px 5px 25px 5px; z-index: 10; }
+.edition-list-wrapper { width: 100%; }
+.edition-list { display: flex; gap: 8px; overflow-x: auto; padding: 2px 5px 5px 5px; scrollbar-width: none; }
+.edition-list::-webkit-scrollbar { display: none; }
+.edition-pill { display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--bg-mid); border: 1px solid var(--glass-border); padding: 4px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; white-space: nowrap; box-shadow: 0 2px 6px var(--shadow-intensity); }
+.edition-pill:hover { border-color: var(--accent-gold); color: var(--text-main); }
+.edition-pill.active { background: var(--glass-active); color: var(--accent-gold); border-color: var(--accent-gold); transform: translateY(-2px); }
+
+@keyframes flash-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.4); } }
+.active-dot { display: inline-block; width: 6px; height: 6px; background: var(--accent-gold); border-radius: 50%; animation: flash-dot 1.5s infinite ease-in-out; box-shadow: 0 0 4px var(--accent-gold); flex-shrink: 0; }
+
+/* قائمة السور */
+.surah-list-container { display: flex; flex-direction: column; gap: 6px; }
+.surah-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg-mid); border: 1px solid var(--glass-border); border-radius: 12px; transition: 0.15s; }
+.surah-row.active-row { border-color: var(--accent-gold); background: var(--glass-active); }
+.surah-info { display: flex; align-items: center; gap: 12px; }
+.surah-number { font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; min-width: 24px; }
+.surah-name { font-size: 0.8rem; font-weight: 700; color: var(--text-main); }
+.surah-actions { display: flex; align-items: center; gap: 8px; }
+.surah-action-btn { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-light); border: 1px solid var(--glass-border); color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+.surah-action-btn:hover { background: var(--glass-active); color: var(--accent-gold); border-color: var(--accent-gold); }
+.surah-action-btn svg { width: 14px !important; height: 14px !important; }
+.active-row .play-cell { background: var(--accent-gold); color: #fff; border-color: var(--accent-gold); box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3); }
+.active-row .play-cell:hover { transform: scale(1.05); }
+
+/* تغيير اللون لحظياً لأزرار المشغل */
+.icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.icon-btn:hover { color: var(--accent-hover); }
+.icon-btn.active-feature { color: var(--accent-gold) !important; transition: none !important; }
+
+/* نافذة التحميل */
+.download-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center; }
+.download-modal-content { background: var(--bg-mid); border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+.dl-modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 15px; color: var(--text-main); }
+.dl-progress-track { width: 100%; height: 8px; background: var(--glass-border); border-radius: 10px; overflow: hidden; position: relative; }
+.dl-progress-fill { height: 100%; width: 0%; background: var(--accent-gold); transition: width 0.1s linear; border-radius: 10px; }
+.dl-modal-pct { margin-top: 12px; font-size: 0.9rem; font-weight: 700; color: var(--accent-gold); }
+
+/* المشغل السفلي */
+.floating-player { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 440px; background: var(--player-bg); backdrop-filter: blur(20px); border-radius: 16px; border: 1px solid var(--glass-border); padding: 6px 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); display: none; z-index: 1000; }
+.player-seekbar-container { width: 100%; height: 12px; display: flex; align-items: center; cursor: pointer; direction: ltr; margin-bottom: 2px; touch-action: none; }
+.player-seekbar-track { width: 100%; height: 4px; background: rgba(0,0,0,0.05); border-radius: 10px; position: relative; }
+.player-seekbar-fill { height: 100%; background: var(--accent-gold); width: 0%; border-radius: 10px; position: relative; pointer-events: none; }
+.player-seekbar-thumb { position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #fff; border: 2px solid var(--accent-gold); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.play-toggle-btn { background: var(--accent-gold); color: #fff; border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(197, 160, 89, 0.4); transition: transform 0.2s; }
+.play-toggle-btn:active { transform: scale(0.92); }
+.play-toggle-btn svg { width: 16px !important; height: 16px !important; }
+.icon-btn svg { width: 20px; height: 20px; }
+
+/* قائمة التحكم في التشغيل */
+.playback-menu {
+    position: absolute; bottom: 100%; right: 0; margin-bottom: 10px; width: 120px;
+    background: var(--bg-mid); border: 1px solid var(--glass-border); border-radius: 10px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.15); overflow: hidden;
+    max-height: 0; opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; transform: translateY(10px);
+    z-index: 1010;
+}
+.playback-menu.show { max-height: 200px; opacity: 1; pointer-events: auto; transform: translateY(0); }
+.playback-menu-item { padding: 8px 12px; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); cursor: pointer; text-align: right; transition: 0.2s; border-bottom: 1px solid var(--glass-border); }
+.playback-menu-item:last-child { border-bottom: none; }
+.playback-menu-item:hover { background: var(--glass-bg); color: var(--text-main); }
+.playback-menu-item.active { background: var(--glass-active); color: var(--accent-gold); }
+
+.toast {
+    position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text-main); color: var(--bg-mid);
+    padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+    opacity: 0; pointer-events: none; transition: all 0.3s ease;
+    z-index: 10000; text-align: center; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
