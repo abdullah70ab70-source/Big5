@@ -93,11 +93,42 @@ body.dark-theme .radio-badge { border-color: var(--bg-dark); }
     100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); } 
 }
 
+/* الرأس واسم القارئ */
 header { text-align: center; padding-bottom: 20px; }
 .header-img { height: 85px; width: 85px; border-radius: 50%; border: 2px solid var(--accent-gold); box-shadow: 0 4px 20px var(--shadow-intensity); object-fit: cover; margin-bottom: 10px; }
-header h1 { font-size: 1.25rem; font-weight: 300; }
+header h1 { font-size: 1.15rem; font-weight: 300; margin-top: 5px; } 
 header h1 strong { font-weight: 700; color: var(--accent-gold); }
 header p { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+/* موجات الصوت أسفل القارئ (المعادل الصوتي) */
+.header-equalizer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    height: 18px;
+    margin-top: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+.header-equalizer.playing {
+    opacity: 1;
+    visibility: visible;
+}
+.header-eq-bar {
+    width: 3px;
+    height: 100%; /* هذا هو السطر الذي أضفته لحل مشكلة الظهور */
+    background: var(--accent-gold);
+    border-radius: 3px;
+    transform-origin: bottom;
+    box-shadow: 0 0 8px rgba(197, 160, 89, 0.4);
+}
+.header-equalizer.playing .header-eq-bar:nth-child(1) { animation: equalize 0.7s infinite alternate ease-in-out; }
+.header-equalizer.playing .header-eq-bar:nth-child(2) { animation: equalize 0.5s infinite alternate ease-in-out 0.2s; }
+.header-equalizer.playing .header-eq-bar:nth-child(3) { animation: equalize 0.8s infinite alternate ease-in-out 0.1s; }
+.header-equalizer.playing .header-eq-bar:nth-child(4) { animation: equalize 0.6s infinite alternate ease-in-out 0.3s; }
+.header-equalizer.playing .header-eq-bar:nth-child(5) { animation: equalize 0.7s infinite alternate ease-in-out 0.15s; }
 
 /* القراء */
 .sheikh-selector-wrapper { width: 100%; margin: 10px 0 5px 0; }
@@ -144,7 +175,7 @@ header p { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
 .active-row .play-cell:hover { transform: scale(1.05); }
 
 /* تغيير اللون لحظياً لأزرار المشغل */
-.icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
 .icon-btn:hover { color: var(--accent-hover); }
 .icon-btn.active-feature { color: var(--accent-gold) !important; transition: none !important; }
 
@@ -189,3 +220,43 @@ header p { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
     z-index: 10000; text-align: center; white-space: nowrap;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* =======================================================
+   وضع الاستماع الهادئ (Focus Mode)
+======================================================== */
+
+/* إخفاء العناصر غير الضرورية عند تفعيل الوضع */
+body.focus-mode-active .sheikh-selector-wrapper,
+body.focus-mode-active .edition-dropdown-wrapper,
+body.focus-mode-active .surah-list-container,
+body.focus-mode-active .top-bar-group,
+body.focus-mode-active .install-banner,
+body.focus-mode-active button[onclick="toggleLanguage()"] {
+    display: none !important;
+}
+
+/* تهيئة الشاشة لتكون خالية ومريحة للعين */
+body.focus-mode-active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden; 
+}
+
+/* توسيط صورة القارئ واسم السورة */
+body.focus-mode-active .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    margin-top: -80px; 
+}
+
+/* تكبير صورة القارئ وإضافة لمسة جمالية */
+body.focus-mode-active header {
+    transform: scale(1.35);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 30px;
+}

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- العنوان ووصف الموقع (الافتراضي) -->
+    <!-- العنوان ووصف الموقع -->
     <title>Egy Quran - استمع وحمل القرآن الكريم بأصوات كبار القراء</title>
     <meta name="description" content="منصة Egy Quran تتيح لك الاستماع وتحميل القرآن الكريم بجودة عالية وبأصوات كبار القراء مثل الحصري، المنشاوي، عبد الباسط، مع دعم التشغيل التلقائي والتكرار.">
     <meta name="keywords" content="قرآن كريم, استماع القرآن, تحميل القرآن, مصحف كبار القراء, الحصري, المنشاوي, عبد الباسط عبد الصمد, mp3 قرآن, Egy Quran">
@@ -14,20 +14,20 @@
     <link rel="canonical" href="https://egyquran.com/">
     <meta name="robots" content="index, follow">
 
-    <!-- Open Graph (للمشاركة على فيسبوك، واتساب، وتليجرام) -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://egyquran.com/">
     <meta property="og:title" content="Egy Quran - القرآن الكريم بأصوات كبار القراء">
     <meta property="og:description" content="استمع وحمل سور القرآن الكريم بجودة عالية وتجربة استخدام سلسة بدون إعلانات مزعجة.">
     <meta property="og:image" content="https://egyquran.com/icon.png">
 
-    <!-- Twitter Cards (للمشاركة على تويتر/X) -->
+    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Egy Quran - القرآن الكريم بأصوات كبار القراء">
     <meta name="twitter:description" content="استمع وحمل سور القرآن الكريم بجودة عالية وتجربة استخدام سلسة.">
     <meta name="twitter:image" content="https://egyquran.com/icon.png">
 
-    <!-- البيانات المهيكلة (Schema Markup) -->
+    <!-- البيانات المهيكلة -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -98,6 +98,7 @@
         <div class="top-bar">
             <div class="top-bar-group">
                 <button class="top-btn" onclick="toggleTheme()" id="theme-toggle-btn"></button>
+
                 <a href="mailto:your-email@example.com" class="top-btn email-btn" title="تواصل معنا">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -105,7 +106,7 @@
                     </svg>
                 </a>
                 
-                <!-- زر إذاعة القرآن الكريم مع الإرشاد (Tooltip & Badge) -->
+                <!-- زر إذاعة القرآن الكريم مع الإرشاد -->
                 <div class="radio-wrapper">
                     <button class="top-btn" id="radio-btn" onclick="playRadio()" title="إذاعة القرآن الكريم">
                         <span class="radio-badge" id="radio-badge"></span>
@@ -126,6 +127,15 @@
             <img src="" id="header-avatar-img" class="header-img">
             <h1 id="main-title"></h1>
             <p id="header-subtitle"></p>
+            
+            <!-- المعادل الصوتي أسفل القارئ -->
+            <div id="header-equalizer" class="header-equalizer">
+                <div class="header-eq-bar"></div>
+                <div class="header-eq-bar"></div>
+                <div class="header-eq-bar"></div>
+                <div class="header-eq-bar"></div>
+                <div class="header-eq-bar"></div>
+            </div>
         </header>
 
         <div class="sheikh-selector-wrapper"><div class="sheikh-list" id="sheikh-carousel"></div></div>
@@ -159,7 +169,14 @@
             
             <div style="display:flex; align-items:center; justify-content:space-between; direction:ltr; margin-top:2px;">
                 
-                <div style="width: 70px;"></div> <!-- Placeholder للحفاظ على التوسيط -->
+                <!-- زر وضع الاستماع الهادئ (في المشغل) -->
+                <div style="width: 70px; display: flex; justify-content: flex-start;">
+                    <button class="icon-btn" id="focus-toggle-btn" onclick="toggleFocusMode()" title="وضع الاستماع الهادئ" style="padding: 4px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path>
+                        </svg>
+                    </button>
+                </div>
                 
                 <div style="display:flex; align-items:center; gap:16px;">
                     <button class="icon-btn" onclick="playPrevious()" title="السابق">

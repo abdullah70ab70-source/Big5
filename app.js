@@ -94,6 +94,7 @@ let currentTheme = 'light', currentSheikhId = "husary", currentEdition = 1;
 let activeSurahsData = [], playingSurahId = null, playingSheikhId = null, playingEditionId = null, isBuffering = false;
 let audioInstance = new Audio();
 let isRadioHeaderActive = false;
+let isFocusMode = false;
 
 let preloadAudioObj = new Audio(); 
 let preloadedSurahId = null;
@@ -105,6 +106,37 @@ let playbackMode = 'autonext'; // 'autonext', 'loop', 'off'
 let playbackMenuOpen = false;
 
 function getSurahName(id, nameAr) { return currentLang === 'ar' ? nameAr : surahNamesEn[id]; }
+
+// دالة ذكية لتحديث واجهة القارئ في الأعلى بناءً على الوضع الحالي
+function updateHeaderUI() {
+    // إذا كان وضع الاستماع الهادئ مفعلاً وهناك شيء يعمل
+    if (isFocusMode && (playingSheikhId || playingSurahId === 'radio')) {
+        if (playingSurahId === 'radio') {
+            document.getElementById('header-avatar-img').src = 'radio.png';
+            document.getElementById('main-title').innerHTML = `<strong>${translations[currentLang].radioTitle}</strong>`;
+            document.getElementById('header-subtitle').innerText = translations[currentLang].live;
+        } else {
+            const s = recitersList.find(r => r.id === playingSheikhId);
+            document.getElementById('header-avatar-img').src = s.image;
+            document.getElementById('main-title').innerHTML = `${translations[currentLang].sheikhPrefix} <strong>${currentLang === 'ar' ? s.nameAr : s.nameEn}</strong>`;
+            document.getElementById('header-subtitle').innerText = currentLang === 'ar' ? editionsConfig[playingSheikhId][playingEditionId].descAr : editionsConfig[playingSheikhId][playingEditionId].descEn;
+        }
+    } else {
+        // الوضع العادي أو لا شيء يعمل
+        if (isRadioHeaderActive) {
+            document.getElementById('header-avatar-img').src = 'radio.png';
+            document.getElementById('main-title').innerHTML = `<strong>${translations[currentLang].radioTitle}</strong>`;
+            document.getElementById('header-subtitle').innerText = translations[currentLang].live;
+        } else {
+            const s = recitersList.find(r => r.id === currentSheikhId);
+            if (s) {
+                document.getElementById('header-avatar-img').src = s.image;
+                document.getElementById('main-title').innerHTML = `${translations[currentLang].sheikhPrefix} <strong>${currentLang === 'ar' ? s.nameAr : s.nameEn}</strong>`;
+                document.getElementById('header-subtitle').innerText = currentLang === 'ar' ? editionsConfig[currentSheikhId][currentEdition].descAr : editionsConfig[currentSheikhId][currentEdition].descEn;
+            }
+        }
+    }
+}
 
 function toggleLanguage() {
     currentLang = currentLang === 'ar' ? 'en' : 'ar';
@@ -121,18 +153,12 @@ function toggleLanguage() {
     document.getElementById('install-desc').innerText = translations[currentLang].installDesc;
     document.getElementById('install-action-btn').innerText = translations[currentLang].installBtn;
     document.getElementById('radio-tooltip').innerText = translations[currentLang].radioTooltip;
-    
-    const wasRadioHeader = isRadioHeaderActive;
-    selectSheikh(currentSheikhId);
+
+    // تحديث واجهة القارئ باللغة الجديدة
+    updateHeaderUI();
     setPlaybackMode(playbackMode);
     
-    if (wasRadioHeader) {
-        isRadioHeaderActive = true;
-        document.getElementById('header-avatar-img').src = 'radio.png';
-        document.getElementById('main-title').innerHTML = `<strong>${translations[currentLang].radioTitle}</strong>`;
-        document.getElementById('header-subtitle').innerText = translations[currentLang].live;
-    }
-    
+    // تحديث المشغل السفلي
     if (playingSurahId === 'radio') {
         document.getElementById('player-track-title').innerText = translations[currentLang].radioTitle;
         document.getElementById('total-time').innerText = translations[currentLang].live;
@@ -146,6 +172,34 @@ function toggleTheme() {
     currentTheme = currentTheme === 'light' ? 'dark' : 'light';
     document.body.className = currentTheme === 'dark' ? 'dark-theme' : '';
     document.getElementById('theme-toggle-btn').innerHTML = currentTheme === 'dark' ? icons.moon : icons.sun;
+}
+
+// =======================================================
+// وضع الاستماع الهادئ (Focus Mode)
+// =======================================================
+function toggleFocusMode() {
+    isFocusMode = !isFocusMode;
+    const focusBtn = document.getElementById('focus-toggle-btn');
+    
+    if (isFocusMode) {
+        // تفعيل الوضع
+        document.body.classList.add('focus-mode-active');
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // الصعود لأعلى الشاشة تلقائياً
+        
+        // تفعيل لون الأيقونة الذهبي
+        if (focusBtn) focusBtn.classList.add('active-feature');
+        showToast(currentLang === 'ar' ? 'تم تفعيل وضع الاستماع الهادئ' : 'Focus Mode Enabled');
+    } else {
+        // إلغاء الوضع
+        document.body.classList.remove('focus-mode-active');
+        
+        // إزالة لون الأيقونة الذهبي
+        if (focusBtn) focusBtn.classList.remove('active-feature');
+        showToast(currentLang === 'ar' ? 'تم إيقاف وضع الاستماع الهادئ' : 'Focus Mode Disabled');
+    }
+    
+    updateHeaderUI();
+    syncUIWithAudioState(); // لتحديث رؤية المعادل الصوتي
 }
 
 // دوال التحكم في المشغل (تلقائي/تكرار/إيقاف)
@@ -214,6 +268,20 @@ function syncUIWithAudioState() {
             radioBtn.classList.add('radio-active');
         } else {
             radioBtn.classList.remove('radio-active');
+        }
+    }
+
+    // إظهار المعادل الصوتي أسفل اسم القارئ فقط إذا كان القارئ المعروض هو الذي يقرأ بالفعل
+    const isHeaderMatchingPlaying = isFocusMode || 
+        (playingSurahId === 'radio' && isRadioHeaderActive) || 
+        (playingSurahId !== 'radio' && currentSheikhId === playingSheikhId && currentEdition == playingEditionId);
+
+    const headerEq = document.getElementById('header-equalizer');
+    if (headerEq) {
+        if (isPlaying && !isBuffering && isHeaderMatchingPlaying) {
+            headerEq.classList.add('playing');
+        } else {
+            headerEq.classList.remove('playing');
         }
     }
 
@@ -322,11 +390,8 @@ async function selectSheikh(id) {
     
     if (id === playingSheikhId && playingEditionId && editionsConfig[id][playingEditionId]) currentEdition = playingEditionId; else currentEdition = savedReciterEditions[id] || 1;
     const s = recitersList.find(r => r.id === id);
-    document.getElementById('header-avatar-img').src = s.image;
-    document.getElementById('main-title').innerHTML = `${translations[currentLang].sheikhPrefix} <strong>${currentLang === 'ar' ? s.nameAr : s.nameEn}</strong>`;
-    document.getElementById('header-subtitle').innerText = currentLang === 'ar' ? editionsConfig[id][currentEdition].descAr : editionsConfig[id][currentEdition].descEn;
 
-    // تحديث عنوان الصفحة والوصف والرابط ديناميكياً لمحركات البحث وللمشاركة (History API)
+    // تحديث عنوان الصفحة والوصف والرابط ديناميكياً لمحركات البحث وللمشاركة
     const sheikhName = currentLang === 'ar' ? s.nameAr : s.nameEn;
     document.title = `Egy Quran - ${currentLang === 'ar' ? 'الشيخ' : 'Sheikh'} ${sheikhName}`;
     const metaDesc = document.querySelector('meta[name="description"]');
@@ -335,8 +400,10 @@ async function selectSheikh(id) {
             `استمع وحمل القرآن الكريم كاملاً بصوت الشيخ ${sheikhName} بجودة عالية وبدون إعلانات مزعجة على Egy Quran.` : 
             `Listen and download the complete Holy Quran by Sheikh ${sheikhName} in high quality on Egy Quran.`);
     }
-    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + `?Sheikh=${id}`;
+    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + `?sheikh=${id}`;
     window.history.pushState({ path: newUrl }, '', newUrl);
+
+    updateHeaderUI();
 
     renderSheikhCarousel(); renderEditionDropdown(); await loadEditionData(id, currentEdition);
     
@@ -361,15 +428,9 @@ function renderEditionDropdown() {
 async function selectEditionDropdown(num, event) {
     if(event) event.stopPropagation(); if(currentEdition == num) return; 
     currentEdition = num; savedReciterEditions[currentSheikhId] = num; 
+    isRadioHeaderActive = false;
     
-    if (isRadioHeaderActive) {
-        isRadioHeaderActive = false;
-        const s = recitersList.find(r => r.id === currentSheikhId);
-        document.getElementById('header-avatar-img').src = s.image;
-        document.getElementById('main-title').innerHTML = `${translations[currentLang].sheikhPrefix} <strong>${currentLang === 'ar' ? s.nameAr : s.nameEn}</strong>`;
-    }
-    
-    document.getElementById('header-subtitle').innerText = currentLang === 'ar' ? editionsConfig[currentSheikhId][num].descAr : editionsConfig[currentSheikhId][num].descEn;
+    updateHeaderUI();
     renderEditionDropdown(); await loadEditionData(currentSheikhId, num);
 }
 
@@ -382,7 +443,7 @@ function hideRadioDiscovery() {
 
 // --- دالة تشغيل الراديو ---
 function playRadio() {
-    hideRadioDiscovery(); // بمجرد الضغط، يختفي الإرشاد للأبد
+    hideRadioDiscovery();
 
     if (playingSurahId === 'radio') { togglePlayPause(); return; }
     
@@ -393,7 +454,7 @@ function playRadio() {
     isBuffering = true; 
     
     audioInstance.src = radioUrl; 
-    audioInstance.loop = false; // الراديو لا يحتاج لتكرار
+    audioInstance.loop = false;
     audioInstance.play().catch(e => console.log(e));
     
     localStorage.setItem('lastPlayedQuran', JSON.stringify({ sheikh: null, edition: null, surah: 'radio' }));
@@ -402,9 +463,7 @@ function playRadio() {
     document.getElementById('player-track-title').innerText = translations[currentLang].radioTitle;
     
     isRadioHeaderActive = true;
-    document.getElementById('header-avatar-img').src = 'radio.png';
-    document.getElementById('main-title').innerHTML = `<strong>${translations[currentLang].radioTitle}</strong>`;
-    document.getElementById('header-subtitle').innerText = translations[currentLang].live;
+    updateHeaderUI();
     
     // تحديث عنوان الصفحة والوصف والرابط للإذاعة
     document.title = `Egy Quran - ${translations[currentLang].radioTitle}`;
@@ -432,23 +491,16 @@ function playRadio() {
         });
         navigator.mediaSession.setActionHandler('play', () => togglePlayPause()); 
         navigator.mediaSession.setActionHandler('pause', () => togglePlayPause());
-        navigator.mediaSession.setActionHandler('previoustrack', null); // إيقاف أزرار التنقل
+        navigator.mediaSession.setActionHandler('previoustrack', null); 
         navigator.mediaSession.setActionHandler('nexttrack', null);
-        navigator.mediaSession.setActionHandler('seekto', null); // منع التقديم والتأخير
+        navigator.mediaSession.setActionHandler('seekto', null); 
     }
 }
 
 function playSurah(id, url) {
     if (playingSurahId === id && playingSheikhId === currentSheikhId && playingEditionId === currentEdition) { togglePlayPause(); return; }
     
-    if (isRadioHeaderActive) {
-        isRadioHeaderActive = false;
-        const s = recitersList.find(r => r.id === currentSheikhId);
-        document.getElementById('header-avatar-img').src = s.image;
-        document.getElementById('main-title').innerHTML = `${translations[currentLang].sheikhPrefix} <strong>${currentLang === 'ar' ? s.nameAr : s.nameEn}</strong>`;
-        document.getElementById('header-subtitle').innerText = currentLang === 'ar' ? editionsConfig[currentSheikhId][currentEdition].descAr : editionsConfig[currentSheikhId][currentEdition].descEn;
-    }
-
+    isRadioHeaderActive = false;
     playingSurahId = id; playingSheikhId = currentSheikhId; playingEditionId = currentEdition;
     
     isBuffering = true; 
@@ -468,6 +520,7 @@ function playSurah(id, url) {
     document.getElementById('progress-thumb').style.display = 'block';
     document.getElementById('time-separator').style.display = 'inline';
 
+    updateHeaderUI();
     syncUIWithAudioState();
     
     if ('mediaSession' in navigator) {
@@ -483,7 +536,7 @@ function togglePlayPause() {
         isBuffering = true;
         syncUIWithAudioState();
         
-        // إعادة تحميل البث المباشر لضمان أنه "مباشر" وليس من نقطة التوقف
+        // إعادة تحميل البث المباشر
         if (playingSurahId === 'radio') {
             audioInstance.src = radioUrl;
             audioInstance.load();
@@ -638,20 +691,14 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navi
     
     // قراءة الرابط للبحث عن قارئ محدد أو الإذاعة
     const urlParams = new URLSearchParams(window.location.search);
-    const reciterFromUrl = urlParams.get('Sheikh');
+    const reciterFromUrl = urlParams.get('sheikh'); 
     const listenFromUrl = urlParams.get('listen');
 
     if (listenFromUrl === 'radio') {
         // إذا كان الزائر قادماً من رابط الإذاعة المباشر
         playingSurahId = 'radio';
-        // سنقوم بتجهيز واجهة الراديو فوراً
         isRadioHeaderActive = true;
-        document.getElementById('header-avatar-img').src = 'radio.png';
-        document.getElementById('main-title').innerHTML = `<strong>${translations[currentLang].radioTitle}</strong>`;
-        document.getElementById('header-subtitle').innerText = translations[currentLang].live;
-        document.title = `Egy Quran - ${translations[currentLang].radioTitle}`;
     } else if (reciterFromUrl && recitersList.some(r => r.id === reciterFromUrl)) {
-        // إذا كان الزائر قادماً من رابط يحمل اسم قارئ
         targetSheikh = reciterFromUrl;
         if(savedState && savedState.sheikh === targetSheikh) {
             savedReciterEditions[targetSheikh] = savedState.edition;
@@ -660,7 +707,6 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navi
             playingSurahId = savedState.surah; 
         }
     } else if (savedState && savedState.sheikh) { 
-        // الحالة العادية: فتح الموقع والاعتماد على الذاكرة المحلية
         targetSheikh = savedState.sheikh; 
         savedReciterEditions[targetSheikh] = savedState.edition; 
         playingSheikhId = savedState.sheikh; 
@@ -672,12 +718,12 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navi
     
     await selectSheikh(targetSheikh);
 
-    // تشغيل الراديو تلقائياً في الخلفية (في حال السماح بذلك من المتصفح)
+    // تشغيل الراديو تلقائياً في الخلفية
     if (listenFromUrl === 'radio') {
         playRadio();
     }
 
-    // تفعيل إرشاد الراديو (إذا لم يتم استكشافه من قبل بالضغط عليه)
+    // تفعيل إرشاد الراديو
     if (!localStorage.getItem('radioDiscovered')) {
         setTimeout(() => {
             document.getElementById('radio-tooltip').classList.add('show');
@@ -685,7 +731,7 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navi
         }, 2500); 
     }
 
-    // إظهار تنبيه الاستئناف فقط للسور المحفوظة 
+    // إظهار تنبيه الاستئناف
     if(savedState && savedState.surah && listenFromUrl !== 'radio') {
         if (savedState.surah === 'radio') {
             audioInstance.src = radioUrl;
@@ -693,9 +739,7 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navi
             document.getElementById('player-track-title').innerText = translations[currentLang].radioTitle;
             
             isRadioHeaderActive = true;
-            document.getElementById('header-avatar-img').src = 'radio.png';
-            document.getElementById('main-title').innerHTML = `<strong>${translations[currentLang].radioTitle}</strong>`;
-            document.getElementById('header-subtitle').innerText = translations[currentLang].live;
+            updateHeaderUI();
 
             document.getElementById('progress-bar-fill').style.width = '100%';
             document.getElementById('progress-thumb').style.display = 'none';
